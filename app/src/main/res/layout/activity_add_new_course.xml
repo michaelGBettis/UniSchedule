@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.michaelbettis_term_scheduler.Activities.CourseActivities.AddNewCourseActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout"
+        android:padding="16dp">
+
+        <EditText
+            android:id="@+id/course_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Course Name"
+            android:inputType="text"
+            android:autofillHints="" />
+
+        <TextView
+            android:id="@+id/course_start"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.EditText"
+            android:hint="Start Date" />
+
+        <TextView
+            android:id="@+id/course_end"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.AppCompat.EditText"
+            android:hint="End Date" />
+
+        <Spinner
+            android:id="@+id/course_status"
+            android:layout_width="match_parent"
+            android:layout_height="18pt" />
+
+        <EditText
+            android:id="@+id/course_mentor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Course Mentor"
+            android:autofillHints=""
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/mentor_phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:maxLength="10"
+            android:hint="Mentor Phone"
+            android:autofillHints="" />
+
+        <EditText
+            android:id="@+id/mentor_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Mentor Email"
+            android:autofillHints=""
+            android:inputType="text" />
+
+        <CheckBox
+            android:id="@+id/start_notification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Receive a notification on Start Day?" />
+
+        <CheckBox
+            android:id="@+id/end_notification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Receive a notification on End Day?" />
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

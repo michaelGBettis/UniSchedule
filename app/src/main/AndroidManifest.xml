@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.michaelbettis_term_scheduler">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:fullBackupContent="@xml/backup_descriptor">
+
+        <receiver
+            android:name=".MyReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="TODO" />
+
+        <activity
+            android:name=".Activities.LoginActivities.ResetPasswordActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".Activities.MainActivity" />
+
+        <activity
+            android:name=".Activities.LoginActivities.SignUpActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".Activities.MainActivity" />
+
+        <activity
+            android:name=".Activities.AssessmentActivities.AssessmentListActivity"
+            android:label="@string/title_activity_assessment_list"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".Activities.CourseActivities.CourseDetailActivity" />
+        <activity
+            android:name=".Activities.AssessmentActivities.AssessmentDetailActivity"
+            android:label="@string/title_activity_assessment_detail"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".Activities.AssessmentActivities.AssessmentListActivity" />
+        <activity
+            android:name=".Activities.AssessmentActivities.AddNewAssessmentActivity"
+            android:label="@string/title_activity_add_new_assessment"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".Activities.AssessmentActivities.AssessmentDetailActivity" />
+        <activity
+            android:name=".Activities.NoteActivities.NoteListActivity"
+            android:label="@string/title_activity_note_list"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".Activities.CourseActivities.CourseDetailActivity" />
+        <activity
+            android:name=".Activities.NoteActivities.NoteDetailActivity"
+            android:label="@string/title_activity_note_detail"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".Activities.NoteActivities.NoteListActivity" />
+        <activity
+            android:name=".Activities.NoteActivities.AddNewNoteActivity"
+            android:label="@string/title_activity_add_new_note"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".Activities.NoteActivities.NoteListActivity" />
+        <activity
+            android:name=".Activities.CourseActivities.CourseDetailActivity"
+            android:label="@string/title_activity_course_detail"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".Activities.CourseActivities.CourseListActivity" />
+        <activity
+            android:name=".Activities.CourseActivities.AddNewCourseActivity"
+            android:label="@string/title_activity_add_new_course"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".Activities.CourseActivities.CourseListActivity" />
+        <activity
+            android:name=".Activities.CourseActivities.CourseListActivity"
+            android:label="@string/title_activity_course_list"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".Activities.TermActivities.TermDetailActivity" />
+        <activity
+            android:name=".Activities.TermActivities.AddNewTermActivity"
+            android:label="@string/title_activity_add_new_term"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".Activities.TermActivities.TermListActivity" />
+        <activity
+            android:name=".Activities.TermActivities.TermDetailActivity"
+            android:label="@string/title_activity_term_detail"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:parentActivityName=".Activities.TermActivities.TermListActivity" />
+        <activity
+            android:name=".Activities.TermActivities.TermListActivity"
+            android:label="@string/title_activity_term_list"
+            android:launchMode="singleTop"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".Activities.MainActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

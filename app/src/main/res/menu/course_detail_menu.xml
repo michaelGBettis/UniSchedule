@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/delete_course"
+        android:title="Delete Course" />
+    <item
+        android:id="@+id/edit_course"
+        android:title="Edit Course" />
+    <item
+        android:id="@+id/course_status_button"
+        android:title="TBD" />
+    <item
+        android:id="@+id/course_dropped_button"
+        android:title="Drop Course"
+        android:visible="false" />
+    <item
+        android:id="@+id/sign_out"
+        android:title="Sign Out" />
+
+</menu>

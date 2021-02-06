@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">Uni Schedule</string>
+    <string name="channel_name">Channel</string>
+    <string name="channel_description">Description</string>
+    <!-- Strings used for fragments for navigation -->
+
+    <string-array name="assessment_type">
+        <item>Objective Assessment</item>
+        <item>Performance Assessment</item>
+    </string-array>
+
+    <string-array name="student_type">
+        <item>Undergraduate</item>
+        <item>Graduate</item>
+    </string-array>
+
+    <string-array name="college_type">
+        <item>Information Technology</item>
+        <item>Business</item>
+        <item>Health professionals</item>
+    </string-array>
+
+    <string-array name="course_status">
+        <item>Plan To Take</item>
+        <item>In Progress</item>
+        <item>Completed</item>
+        <item>Dropped</item>
+    </string-array>
+
+    <string name="login">Login</string>
+    <string name="reset_password"><u>Forgot Password?</u></string>
+    <string name="reset">Reset</string>
+    <string name="sign_up"><u>Sign Up</u></string>
+    <string name="title_activity_add_new_assessment">AddNewAssessmentActivity</string>
+    <string name="title_activity_add_new_course">AddNewCourseActivity</string>
+    <string name="title_activity_add_new_note">AddNewNoteActivity</string>
+    <string name="title_activity_add_new_term">AddNewTermActivity</string>
+    <string name="title_activity_assessment_detail">AssessmentDetailActivity</string>
+    <string name="title_activity_assessment_list">AssessmentListActivity</string>
+    <string name="title_activity_course_detail">CourseDetailActivity</string>
+    <string name="title_activity_course_list">CourseListActivity</string>
+    <string name="title_activity_note_detail">NoteDetailActivity</string>
+    <string name="title_activity_note_list">NoteListActivity</string>
+    <string name="title_activity_term_detail">TermDetail</string>
+    <string name="title_activity_term_list">TermList</string>
+</resources>

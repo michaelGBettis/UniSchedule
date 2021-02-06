@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.michaelbettis_term_scheduler.Activities.LoginActivities.SignUpActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout"
+        android:padding="16dp">
+
+        <EditText
+            android:id="@+id/user_first_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="First Name"
+            android:inputType="text"
+            android:autofillHints="Enter First Name" />
+
+        <EditText
+            android:id="@+id/user_middle_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Middle Name or N/A"
+            android:inputType="textPersonName|textCapWords"
+            android:autofillHints="Enter Middle Name" />
+
+        <EditText
+            android:id="@+id/user_last_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Last Name"
+            android:inputType="textPersonName|textCapWords"
+            android:autofillHints="Enter Last Name" />
+
+        <EditText
+            android:id="@+id/user_address"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Address"
+            android:inputType="textPostalAddress"
+            android:autofillHints="Enter Address" />
+
+        <EditText
+            android:id="@+id/user_Phone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Phone Number: 1234567890"
+            android:inputType="number"
+            android:maxLength="10"
+            android:autofillHints="Enter Phone Number" />
+
+        <Spinner
+            android:id="@+id/student_type"
+            android:layout_width="match_parent"
+            android:layout_height="18pt" />
+
+        <Spinner
+            android:id="@+id/college_type"
+            android:layout_width="match_parent"
+            android:layout_height="18pt" />
+
+        <EditText
+            android:id="@+id/user_sat_score"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="SAT Score"
+            android:inputType="numberDecimal"
+            android:autofillHints="Enter SAT Score"
+            android:maxLength="3"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/user_minor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Minor"
+            android:inputType="text"
+            android:autofillHints="Enter Minor"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/user_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Email Address: email@example.com"
+            android:inputType="text"
+            android:autofillHints="Enter Email Address" />
+
+        <EditText
+            android:id="@+id/user_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Password"
+            android:inputType="textPassword"
+            android:autofillHints="Enter Password" />
+
+        <EditText
+            android:id="@+id/user_password_check"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Re-enter Password"
+            android:inputType="textPassword"
+            android:autofillHints="Enter Password" />
+
+        <Button
+            android:id="@+id/create_account"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Create Account" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
