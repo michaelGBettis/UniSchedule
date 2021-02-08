@@ -85,23 +85,23 @@ public abstract class SchedulerDatabase extends RoomDatabase {
         protected Void doInBackground(Void... voids) {
 
 
-            userDao.insert(new UserEntity("Test", "Student", "One", "123 ABC Street", "1234567890", "STUDENT1@TEST.COM", "Student1", "Undergraduate", "Business", "Undergraduate Business", 3.2));
-            userDao.insert(new UserEntity("Test", "Student", "Two", "123 ABC Street", "1234567890", "STUDENT2@TEST.COM", "Student2", "Graduate", "Information Technology", "Graduate Information Technology", "Film"));
+            userDao.insert(new UserEntity("Undergrad", "Student", "One", "123 ABC Street", "1234567890", "UGRADSTUDENT@TEST.COM", "UGradStudent", "Undergraduate", "Business", "Undergraduate Business", 3.2));
+            userDao.insert(new UserEntity("Graduate", "Student", "One", "321 CBA Street", "0987654321", "GRADSTUDENT@TEST.COM", "GradStudent", "Graduate", "Information Technology", "Graduate Information Technology", "Film"));
             termDao.insert(new TermEntity("Undergrad Test Term", today, today, 1));
             termDao.insert(new TermEntity("Empty Undergrad Term", today, today, 1));
             termDao.insert(new TermEntity("Grad Test Term", today, today, 2));
             termDao.insert(new TermEntity("Empty Grad Term", today, today, 2));
-            courseDao.insert(new CourseEntity("Test Course", today, today, "In Progress", "Test Teacher",
+            courseDao.insert(new CourseEntity("Current Course", today, today, "In Progress", "Test Teacher",
                     "0123456789", "TestTeacher@test.com", 1));
-            courseDao.insert(new CourseEntity("Empty Course", today, today, "Plan To Take", "Test Teacher",
+            courseDao.insert(new CourseEntity("Upcoming Course", today, today, "Plan To Take", "Test Teacher",
                     "0123456789", "TestTeacher@test.com", 1));
-            courseDao.insert(new CourseEntity("Empty Course", today, today, "Completed", "Test Teacher",
+            courseDao.insert(new CourseEntity("Completed Course", today, today, "Completed", "Test Teacher",
                     "0123456789", "TestTeacher@test.com", 1));
-            courseDao.insert(new CourseEntity("Test Course", today, today, "In Progress", "Test Teacher",
+            courseDao.insert(new CourseEntity("Current Course", today, today, "In Progress", "Test Teacher",
                     "0123456789", "TestTeacher@test.com", 3));
-            courseDao.insert(new CourseEntity("Empty Course", today, today, "Plan To Take", "Test Teacher",
+            courseDao.insert(new CourseEntity("Upcoming Course", today, today, "Plan To Take", "Test Teacher",
                     "0123456789", "TestTeacher@test.com", 3));
-            courseDao.insert(new CourseEntity("Empty Course", today, today, "Completed", "Test Teacher",
+            courseDao.insert(new CourseEntity("Completed Course", today, today, "Completed", "Test Teacher",
                     "0123456789", "TestTeacher@test.com", 3));
             noteDao.insert(new NoteEntity("Test Note 1", "This is the a test note.", 1));
             noteDao.insert(new NoteEntity("Test Note 2", "This is a second test note", 1));
@@ -112,11 +112,21 @@ public abstract class SchedulerDatabase extends RoomDatabase {
             assessmentDao.insert(new AssessmentEntity("Assessment 3", today, "This is the third Assessment", "Performance Assessment", 1));
             assessmentDao.insert(new AssessmentEntity("Assessment 4", today, "This is the fourth Assessment", "Objective Assessment", 1));
             assessmentDao.insert(new AssessmentEntity("Assessment 5", today, "This is the fifth Assessment", "Objective Assessment", 1));
+            assessmentDao.insert(new AssessmentEntity("Assessment 1", today, "This is the first Assessment", "Objective Assessment", 3));
+            assessmentDao.insert(new AssessmentEntity("Assessment 2", today, "This is the second Assessment", "Performance Assessment", 3));
+            assessmentDao.insert(new AssessmentEntity("Assessment 3", today, "This is the third Assessment", "Performance Assessment", 3));
+            assessmentDao.insert(new AssessmentEntity("Assessment 4", today, "This is the fourth Assessment", "Objective Assessment", 3));
+            assessmentDao.insert(new AssessmentEntity("Assessment 5", today, "This is the fifth Assessment", "Objective Assessment", 3));
             assessmentDao.insert(new AssessmentEntity("Assessment 1", today, "This is the first Assessment", "Objective Assessment", 4));
             assessmentDao.insert(new AssessmentEntity("Assessment 2", today, "This is the second Assessment", "Performance Assessment", 4));
             assessmentDao.insert(new AssessmentEntity("Assessment 3", today, "This is the third Assessment", "Performance Assessment", 4));
             assessmentDao.insert(new AssessmentEntity("Assessment 4", today, "This is the fourth Assessment", "Objective Assessment", 4));
             assessmentDao.insert(new AssessmentEntity("Assessment 5", today, "This is the fifth Assessment", "Objective Assessment", 4));
+            assessmentDao.insert(new AssessmentEntity("Assessment 1", today, "This is the first Assessment", "Objective Assessment", 6));
+            assessmentDao.insert(new AssessmentEntity("Assessment 2", today, "This is the second Assessment", "Performance Assessment", 6));
+            assessmentDao.insert(new AssessmentEntity("Assessment 3", today, "This is the third Assessment", "Performance Assessment", 6));
+            assessmentDao.insert(new AssessmentEntity("Assessment 4", today, "This is the fourth Assessment", "Objective Assessment", 6));
+            assessmentDao.insert(new AssessmentEntity("Assessment 5", today, "This is the fifth Assessment", "Objective Assessment", 6));
             return null;
         }
     }

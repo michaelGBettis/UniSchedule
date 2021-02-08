@@ -42,9 +42,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        Objects.requireNonNull(getSupportActionBar()).setTitle("Uni Schedule");
+
+        //GradStudent@test.com
+        //UGradStudent@test.com
 
         //initializes the values of the EditText fields
         editTextUsername = findViewById(R.id.username);
@@ -57,27 +57,14 @@ public class MainActivity extends AppCompatActivity {
                 String username = editTextUsername.getText().toString().toUpperCase();
                 String password = editTextPassword.getText().toString();
 
-                //check to see if all fields have a value and are not blank spaces
-                if (username.trim().isEmpty() || password.trim().isEmpty()) {
-                    Toast.makeText(MainActivity.this, "Please enter a value in all fields.", Toast.LENGTH_SHORT).show();
-                } else {
+                if (validateLogin(username, password)) {
 
-                    if (validateLogin(username, password)) {
-
-                        Intent intent = new Intent(MainActivity.this, TermListActivity.class);
-                        intent.putExtra(MainActivity.USER_ID, currentUser.getUser_id());
-                        startActivity(intent);
-                        editTextUsername.setText("");
-                        editTextPassword.setText("");
-
-                    } else {
-                        Toast.makeText(MainActivity.this, "Username and/or password do not match. Please try again.", Toast.LENGTH_SHORT).show();
-                    }
-
-
+                    Intent intent = new Intent(MainActivity.this, TermListActivity.class);
+                    intent.putExtra(MainActivity.USER_ID, currentUser.getUser_id());
+                    startActivity(intent);
+                    editTextUsername.setText("");
+                    editTextPassword.setText("");
                 }
-
-
             }
         });
 
@@ -102,13 +89,12 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //method for the login button
     private boolean validateLogin(String username, String password) {
         db = SchedulerDatabase.getInstance(getApplicationContext());
         currentUser = db.userDao().validateUser(username, password);
 
-        if (currentUser == null) {
-            Toast.makeText(MainActivity.this, "Username and/or password do not match. Please try again.", Toast.LENGTH_SHORT).show();
+        if (username.trim().isEmpty() || password.trim().isEmpty() || currentUser == null) {
+            Toast.makeText(MainActivity.this, "Incorrect email or password", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;

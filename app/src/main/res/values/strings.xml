@@ -30,7 +30,7 @@
     <string name="login">Login</string>
     <string name="reset_password"><u>Forgot Password?</u></string>
     <string name="reset">Reset</string>
-    <string name="sign_up"><u>Sign Up</u></string>
+    <string name="sign_up"><u>New User? Register Here!</u></string>
     <string name="title_activity_add_new_assessment">AddNewAssessmentActivity</string>
     <string name="title_activity_add_new_course">AddNewCourseActivity</string>
     <string name="title_activity_add_new_note">AddNewNoteActivity</string>
@@ -43,4 +43,9 @@
     <string name="title_activity_note_list">NoteListActivity</string>
     <string name="title_activity_term_detail">TermDetail</string>
     <string name="title_activity_term_list">TermList</string>
+    <string name="sign_in">Sign In to continue</string>
+    <string name="password">Password</string>
+    <string name="login_welcome">Welcome to UniSchedule!</string>
+    <string name="username">Email</string>
+    <string name="logo_description">Logo image</string>
 </resources>
