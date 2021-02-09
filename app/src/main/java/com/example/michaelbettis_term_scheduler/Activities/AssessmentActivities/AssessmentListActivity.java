@@ -23,7 +23,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.michaelbettis_term_scheduler.Activities.CourseActivities.AddNewCourseActivity;
 import com.example.michaelbettis_term_scheduler.Activities.MainActivity;
 import com.example.michaelbettis_term_scheduler.R;
-import com.example.michaelbettis_term_scheduler.SchedulerDatabase;
+import com.example.michaelbettis_term_scheduler.utils.SchedulerDatabase;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;

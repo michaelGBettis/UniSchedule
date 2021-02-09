@@ -20,12 +20,12 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.michaelbettis_term_scheduler.Activities.CourseActivities.AddNewCourseActivity;
 import com.example.michaelbettis_term_scheduler.Activities.MainActivity;
 import com.example.michaelbettis_term_scheduler.Activities.NoteActivities.NoteListActivity;
-import com.example.michaelbettis_term_scheduler.Converters;
 import com.example.michaelbettis_term_scheduler.R;
-import com.example.michaelbettis_term_scheduler.SchedulerDatabase;
+import com.example.michaelbettis_term_scheduler.utils.SchedulerDatabase;
 
 import com.example.michaelbettis_term_scheduler.Entities.AssessmentEntity;
 import com.example.michaelbettis_term_scheduler.ViewModel.AssessmentViewModel;
+import com.example.michaelbettis_term_scheduler.utils.Helper;
 
 import java.util.Objects;
 
@@ -76,7 +76,7 @@ public class AssessmentDetailActivity extends AppCompatActivity {
         //setting view text
         tvAssessName.setText(name);
         tvAssessDesc.setText(description);
-        tvAssessDueDate.setText(Converters.sdf(dueDate));
+        tvAssessDueDate.setText(Helper.sdf(dueDate));
 
         Button noteButton = findViewById(R.id.all_notes);
         noteButton.setOnClickListener(new View.OnClickListener() {

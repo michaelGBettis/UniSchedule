@@ -1,4 +1,4 @@
-package com.example.michaelbettis_term_scheduler;
+package com.example.michaelbettis_term_scheduler.utils;
 
 import android.content.Context;
 import android.os.AsyncTask;

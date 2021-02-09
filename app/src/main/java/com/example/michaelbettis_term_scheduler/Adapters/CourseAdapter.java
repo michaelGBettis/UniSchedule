@@ -9,13 +9,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.michaelbettis_term_scheduler.Converters;
+import com.example.michaelbettis_term_scheduler.utils.Converters;
 import com.example.michaelbettis_term_scheduler.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.example.michaelbettis_term_scheduler.Entities.CourseEntity;
+import com.example.michaelbettis_term_scheduler.utils.Helper;
 
 public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseHolder> {
     private List<CourseEntity> courses = new ArrayList<>();
@@ -38,8 +39,8 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseHold
 
         CourseEntity currentCourse = courses.get(position);
         holder.textViewTitle.setText(currentCourse.getCourse_name());
-        holder.textViewStartDate.setText(Converters.formatter(currentCourse.getStart_date()));
-        holder.textViewEndDate.setText(Converters.formatter(currentCourse.getEnd_date()));
+        holder.textViewStartDate.setText(Helper.formatter(currentCourse.getStart_date()));
+        holder.textViewEndDate.setText(Helper.formatter(currentCourse.getEnd_date()));
         holder.textViewStatus.setText(currentCourse.getCourse_status());
 
     }

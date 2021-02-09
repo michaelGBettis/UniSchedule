@@ -8,7 +8,6 @@ import com.example.michaelbettis_term_scheduler.Activities.AssessmentActivities.
 import com.example.michaelbettis_term_scheduler.Activities.MainActivity;
 import com.example.michaelbettis_term_scheduler.Activities.NoteActivities.NoteListActivity;
 import com.example.michaelbettis_term_scheduler.Activities.TermActivities.AddNewTermActivity;
-import com.example.michaelbettis_term_scheduler.Converters;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,13 +23,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.michaelbettis_term_scheduler.R;
-import com.example.michaelbettis_term_scheduler.SchedulerDatabase;
+import com.example.michaelbettis_term_scheduler.utils.SchedulerDatabase;
 
 import java.text.ParseException;
 import java.util.Objects;
 
 import com.example.michaelbettis_term_scheduler.Entities.CourseEntity;
 import com.example.michaelbettis_term_scheduler.ViewModel.CourseViewModel;
+import com.example.michaelbettis_term_scheduler.utils.Helper;
 
 public class CourseDetailActivity extends AppCompatActivity {
 
@@ -92,8 +92,8 @@ public class CourseDetailActivity extends AppCompatActivity {
 
         //setting view text
         textViewCourseName.setText(name);
-        textViewStartDate.setText(Converters.sdf(courseStart));
-        textViewEndDate.setText(Converters.sdf(courseEnd));
+        textViewStartDate.setText(Helper.sdf(courseStart));
+        textViewEndDate.setText(Helper.sdf(courseEnd));
         textViewCourseStatus.setText(courseStatus);
         textViewMentorName.setText(mentorName);
         textViewMentorPhone.setText(mentorPhone);
@@ -173,7 +173,7 @@ public class CourseDetailActivity extends AppCompatActivity {
 
         try {
 
-            currentCourse = new CourseEntity(name, Converters.stringToDate(startDate), Converters.stringToDate(endDate), "Dropped", mentorName, mentorPhone, mentorEmail, termId);
+            currentCourse = new CourseEntity(name, Helper.stringToDate(startDate), Helper.stringToDate(endDate), "Dropped", mentorName, mentorPhone, mentorEmail, termId);
             currentCourse.setCourse_id(courseId);
             courseViewModel.update(currentCourse);
             textViewCourseStatus.setText("Dropped");
@@ -196,7 +196,7 @@ public class CourseDetailActivity extends AppCompatActivity {
 
             try {
 
-                currentCourse = new CourseEntity(name, Converters.stringToDate(startDate), Converters.stringToDate(endDate), "In Progress", mentorName, mentorPhone, mentorEmail, termId);
+                currentCourse = new CourseEntity(name, Helper.stringToDate(startDate), Helper.stringToDate(endDate), "In Progress", mentorName, mentorPhone, mentorEmail, termId);
                 currentCourse.setCourse_id(courseId);
                 courseViewModel.update(currentCourse);
                 textViewCourseStatus.setText("In Progress");
@@ -212,7 +212,7 @@ public class CourseDetailActivity extends AppCompatActivity {
 
             try {
 
-                currentCourse = new CourseEntity(name, Converters.stringToDate(textViewStartDate.getText().toString()), Converters.stringToDate(textViewStartDate.getText().toString()), "Completed", mentorName, mentorPhone, mentorEmail, termId);
+                currentCourse = new CourseEntity(name, Helper.stringToDate(textViewStartDate.getText().toString()), Helper.stringToDate(textViewStartDate.getText().toString()), "Completed", mentorName, mentorPhone, mentorEmail, termId);
                 currentCourse.setCourse_id(courseId);
                 courseViewModel.update(currentCourse);
                 textViewCourseStatus.setText("Completed");

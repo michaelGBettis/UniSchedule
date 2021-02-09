@@ -7,12 +7,13 @@ import android.os.Bundle;
 
 import com.example.michaelbettis_term_scheduler.Activities.LoginActivities.SignUpActivity;
 import com.example.michaelbettis_term_scheduler.Activities.MainActivity;
-import com.example.michaelbettis_term_scheduler.Converters;
+import com.example.michaelbettis_term_scheduler.utils.Converters;
 import com.example.michaelbettis_term_scheduler.Entities.UserEntity;
 import com.example.michaelbettis_term_scheduler.R;
 import com.example.michaelbettis_term_scheduler.Adapters.TermAdapter;
 
-import com.example.michaelbettis_term_scheduler.SchedulerDatabase;
+import com.example.michaelbettis_term_scheduler.utils.SchedulerDatabase;
+import com.example.michaelbettis_term_scheduler.utils.Helper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.annotation.NonNull;
@@ -237,7 +238,7 @@ public class TermListActivity extends AppCompatActivity {
             }
         })
                 .setCancelable(true)
-                .setTitle("Student Report for: " + Converters.formatter(today))
+                .setTitle("Student Report for: " + Helper.formatter(today))
                 .setMessage(buffer.toString())
                 .show();
 

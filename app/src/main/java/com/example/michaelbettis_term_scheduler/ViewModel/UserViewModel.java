@@ -7,7 +7,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 import com.example.michaelbettis_term_scheduler.Entities.UserEntity;
-import com.example.michaelbettis_term_scheduler.SchedulerRepository;
+import com.example.michaelbettis_term_scheduler.utils.SchedulerRepository;
 
 import java.util.List;
 

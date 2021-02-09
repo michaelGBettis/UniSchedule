@@ -1,7 +1,9 @@
-package com.example.michaelbettis_term_scheduler.Activities;
+package com.example.michaelbettis_term_scheduler.utils;
 
 import android.os.AsyncTask;
 
+
+import com.example.michaelbettis_term_scheduler.utils.Helper;
 
 import java.util.Properties;
 
@@ -38,14 +40,14 @@ public class JavaMailAPI extends AsyncTask<Void, Void, Void> {
 
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(Utils.EMAIL, Utils.PASSWORD);
+                return new PasswordAuthentication(Helper.decrypt(Helper.PASSWORD, Helper.EMAIL), Helper.decrypt(Helper.decrypt(Helper.PASSWORD, Helper.EMAIL), Helper.PASSWORD));
             }
         });
 
 
         try {
             MimeMessage mimeMessage = new MimeMessage(session);
-            mimeMessage.setFrom(new InternetAddress(Utils.EMAIL));
+            mimeMessage.setFrom(new InternetAddress(Helper.decrypt(Helper.PASSWORD, Helper.EMAIL)));
             mimeMessage.addRecipients(Message.RecipientType.TO, String.valueOf(new InternetAddress(email)));
             mimeMessage.setText(message);
             mimeMessage.setSubject(subject);

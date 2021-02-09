@@ -4,11 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.michaelbettis_term_scheduler.Activities.LoginActivities.ResetPasswordActivity;
@@ -16,9 +14,8 @@ import com.example.michaelbettis_term_scheduler.Activities.LoginActivities.SignU
 import com.example.michaelbettis_term_scheduler.Activities.TermActivities.TermListActivity;
 import com.example.michaelbettis_term_scheduler.Entities.UserEntity;
 import com.example.michaelbettis_term_scheduler.R;
-import com.example.michaelbettis_term_scheduler.SchedulerDatabase;
-
-import java.util.Objects;
+import com.example.michaelbettis_term_scheduler.utils.SchedulerDatabase;
+import com.google.android.material.textfield.TextInputLayout;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -33,8 +30,8 @@ public class MainActivity extends AppCompatActivity {
     public static final String USER_EMAIL = "com.example.michaelbettis_term_scheduler.Activities.USER_EMAIL";
     public static final String STUDENT_TYPE = "com.example.michaelbettis_term_scheduler.Activities.STUDENT_TYPE";
     public static final String COLLEGE_TYPE = "com.example.michaelbettis_term_scheduler.Activities.COLLEGE_TYPE";
-    private EditText editTextUsername;
-    private EditText editTextPassword;
+    private TextInputLayout textInputUsername;
+    private TextInputLayout textInputPassword;
     SchedulerDatabase db;
     UserEntity currentUser;
 
@@ -47,23 +44,27 @@ public class MainActivity extends AppCompatActivity {
         //UGradStudent@test.com
 
         //initializes the values of the EditText fields
-        editTextUsername = findViewById(R.id.username);
-        editTextPassword = findViewById(R.id.password);
+        textInputUsername = findViewById(R.id.username);
+        textInputPassword = findViewById(R.id.password);
 
         Button login = findViewById(R.id.login);
         login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String username = editTextUsername.getText().toString().toUpperCase();
-                String password = editTextPassword.getText().toString();
+                String username = textInputUsername.getEditText().getText().toString().toUpperCase();
+                String password = textInputPassword.getEditText().getText().toString();
 
-                if (validateLogin(username, password)) {
+                if (validateInput(textInputPassword, password) & validateInput(textInputUsername, username)) {
 
-                    Intent intent = new Intent(MainActivity.this, TermListActivity.class);
-                    intent.putExtra(MainActivity.USER_ID, currentUser.getUser_id());
-                    startActivity(intent);
-                    editTextUsername.setText("");
-                    editTextPassword.setText("");
+                    if (validateLogin(username, password)) {
+
+                        Intent intent = new Intent(MainActivity.this, TermListActivity.class);
+                        intent.putExtra(MainActivity.USER_ID, currentUser.getUser_id());
+                        startActivity(intent);
+                        textInputUsername.getEditText().setText("");
+                        textInputPassword.getEditText().setText("");
+                    }
+
                 }
             }
         });
@@ -91,12 +92,24 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean validateLogin(String username, String password) {
         db = SchedulerDatabase.getInstance(getApplicationContext());
-        currentUser = db.userDao().validateUser(username, password);
+        currentUser = db.userDao().validateLogin(username, password);
 
-        if (username.trim().isEmpty() || password.trim().isEmpty() || currentUser == null) {
+        if (currentUser == null) {
             Toast.makeText(MainActivity.this, "Incorrect email or password", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
+    }
+
+    private boolean validateInput(TextInputLayout textInput, String input) {
+
+        if (input.isEmpty()) {
+            textInput.setError("Field cannot be empty");
+            return false;
+        } else {
+            textInput.setError(null);
+            return true;
+        }
+
     }
 }

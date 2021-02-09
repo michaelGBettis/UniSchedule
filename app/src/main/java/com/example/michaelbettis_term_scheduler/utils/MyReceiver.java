@@ -1,4 +1,4 @@
-package com.example.michaelbettis_term_scheduler;
+package com.example.michaelbettis_term_scheduler.utils;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -10,6 +10,8 @@ import android.os.Build;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
+
+import com.example.michaelbettis_term_scheduler.R;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
@@ -41,8 +43,6 @@ public class MyReceiver extends BroadcastReceiver {
             NotificationChannel channel = new NotificationChannel("test", name, importance);
             channel.setDescription(description);
 
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }

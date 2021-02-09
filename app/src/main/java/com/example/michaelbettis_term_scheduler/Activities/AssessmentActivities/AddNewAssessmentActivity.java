@@ -26,9 +26,8 @@ import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.michaelbettis_term_scheduler.Activities.CourseActivities.AddNewCourseActivity;
-import com.example.michaelbettis_term_scheduler.Converters;
-import com.example.michaelbettis_term_scheduler.DatePickerFragment;
-import com.example.michaelbettis_term_scheduler.MyReceiver;
+import com.example.michaelbettis_term_scheduler.utils.DatePickerFragment;
+import com.example.michaelbettis_term_scheduler.utils.MyReceiver;
 import com.example.michaelbettis_term_scheduler.R;
 
 import java.text.DateFormat;
@@ -38,6 +37,7 @@ import java.util.Objects;
 
 import com.example.michaelbettis_term_scheduler.Entities.AssessmentEntity;
 import com.example.michaelbettis_term_scheduler.ViewModel.AssessmentViewModel;
+import com.example.michaelbettis_term_scheduler.utils.Helper;
 
 public class AddNewAssessmentActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, View.OnClickListener {
     public static final String ASSESS_ID = "com.example.michaelbettis_term_scheduler.Activities.ASSESS_ID";
@@ -90,7 +90,7 @@ public class AddNewAssessmentActivity extends AppCompatActivity implements DateP
             getSupportActionBar().setTitle("Edit Assessment");
             etAssessName.setText(intent.getStringExtra(ASSESS_NAME));
             etAssessDesc.setText(intent.getStringExtra(ASSESS_DESC));
-            tvAssessDueDate.setText(Converters.sdf(intent.getStringExtra(ASSESS_DUE_DATE)));
+            tvAssessDueDate.setText(Helper.sdf(intent.getStringExtra(ASSESS_DUE_DATE)));
 
             //gets and sets spinner value
             int selectionPosition = adapter.getPosition(intent.getStringExtra(ASSESS_TYPE));
@@ -145,8 +145,10 @@ public class AddNewAssessmentActivity extends AppCompatActivity implements DateP
     public void onClick(View view) {
         Bundle currentDate = new Bundle();
         try {
-            currentDate.putLong("setEndDate", Converters.stringToLong(courseEnd));
-            currentDate.putLong("setStartDate", Converters.stringToLong(courseStart));
+            System.out.println(Helper.stringToLong(courseEnd));
+            System.out.println(Helper.stringToLong(courseStart));
+            currentDate.putLong("setEndDate", Helper.stringToLong(courseEnd));
+            currentDate.putLong("setStartDate", Helper.stringToLong(courseStart));
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -171,11 +173,11 @@ public class AddNewAssessmentActivity extends AppCompatActivity implements DateP
         } else {
             AssessmentEntity assess;
             if (assessId == -1) {
-                assess = new AssessmentEntity(name, Converters.stringToDate(dueDate), description, type, courseId);
+                assess = new AssessmentEntity(name, Helper.stringToDate(dueDate), description, type, courseId);
                 assessViewModel.insert(assess);
                 Toast.makeText(this, "Assessment Added", Toast.LENGTH_SHORT).show();
             } else {
-                assess = new AssessmentEntity(name, Converters.stringToDate(dueDate), description, type, courseId);
+                assess = new AssessmentEntity(name, Helper.stringToDate(dueDate), description, type, courseId);
                 assess.setAssessment_id(assessId);
                 assessViewModel.update(assess);
                 Toast.makeText(this, "Assessment updated", Toast.LENGTH_SHORT).show();
@@ -188,7 +190,7 @@ public class AddNewAssessmentActivity extends AppCompatActivity implements DateP
             intent.putExtra("Notification", "This is a reminder that Assessment, " + name + ", is due today!");
             PendingIntent sender = PendingIntent.getBroadcast(AddNewAssessmentActivity.this, 2, intent, 0);
             AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-            alarmManager.set(AlarmManager.RTC_WAKEUP, Converters.stringToDate(dueDate).getTime(), sender);
+            alarmManager.set(AlarmManager.RTC_WAKEUP, Helper.stringToDate(dueDate).getTime(), sender);
         }
 
         Intent intent = new Intent(AddNewAssessmentActivity.this, AssessmentListActivity.class);

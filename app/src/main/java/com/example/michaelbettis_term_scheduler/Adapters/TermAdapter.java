@@ -10,7 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.michaelbettis_term_scheduler.Converters;
+import com.example.michaelbettis_term_scheduler.utils.Helper;
 import com.example.michaelbettis_term_scheduler.R;
 
 import java.util.ArrayList;
@@ -40,8 +40,8 @@ public class TermAdapter extends RecyclerView.Adapter<TermAdapter.TermHolder> im
 
         TermEntity currentTerm = terms.get(position);
         holder.textViewTitle.setText(currentTerm.getTerm_name());
-        holder.textViewStartDate.setText(Converters.formatter(currentTerm.getStart_date()));
-        holder.textViewEndDate.setText(Converters.formatter(currentTerm.getEnd_date()));
+        holder.textViewStartDate.setText(Helper.formatter(currentTerm.getStart_date()));
+        holder.textViewEndDate.setText(Helper.formatter(currentTerm.getEnd_date()));
 
     }
 

@@ -17,7 +17,7 @@ import android.widget.Toast;
 import com.example.michaelbettis_term_scheduler.Activities.MainActivity;
 import com.example.michaelbettis_term_scheduler.Entities.UserEntity;
 import com.example.michaelbettis_term_scheduler.R;
-import com.example.michaelbettis_term_scheduler.SchedulerDatabase;
+import com.example.michaelbettis_term_scheduler.utils.SchedulerDatabase;
 import com.example.michaelbettis_term_scheduler.ViewModel.UserViewModel;
 
 import java.util.Objects;
@@ -273,7 +273,7 @@ public class SignUpActivity extends AppCompatActivity {
     //has an account already associated with it
     private boolean isCurrentUser(String username) {
         SchedulerDatabase db = SchedulerDatabase.getInstance(getApplicationContext());
-        UserEntity currentUser = db.userDao().isAUser(username);
+        UserEntity currentUser = db.userDao().validateUserByEmail(username);
 
         return currentUser != null;
     }

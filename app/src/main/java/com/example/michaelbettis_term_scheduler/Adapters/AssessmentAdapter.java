@@ -10,13 +10,14 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.michaelbettis_term_scheduler.Converters;
+import com.example.michaelbettis_term_scheduler.utils.Converters;
 import com.example.michaelbettis_term_scheduler.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import com.example.michaelbettis_term_scheduler.Entities.AssessmentEntity;
+import com.example.michaelbettis_term_scheduler.utils.Helper;
 
 public class AssessmentAdapter extends RecyclerView.Adapter<AssessmentAdapter.AssessmentHolder> {
     private List<AssessmentEntity> assessment = new ArrayList<>();
@@ -35,7 +36,7 @@ public class AssessmentAdapter extends RecyclerView.Adapter<AssessmentAdapter.As
     public void onBindViewHolder(@NonNull AssessmentHolder holder, int position) {
         AssessmentEntity currentAssessment = assessment.get(position);
         holder.textViewTitle.setText(currentAssessment.getAssessment_name());
-        holder.textViewDueDate.setText(Converters.formatter(currentAssessment.getDue_date()));
+        holder.textViewDueDate.setText(Helper.formatter(currentAssessment.getDue_date()));
         holder.textViewType.setText(currentAssessment.getAssessment_type().substring(0, 1));
 
     }

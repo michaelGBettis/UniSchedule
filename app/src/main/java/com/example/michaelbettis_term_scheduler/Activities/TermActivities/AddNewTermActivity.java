@@ -13,8 +13,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.michaelbettis_term_scheduler.Activities.MainActivity;
-import com.example.michaelbettis_term_scheduler.Converters;
-import com.example.michaelbettis_term_scheduler.DatePickerFragment;
+import com.example.michaelbettis_term_scheduler.utils.Helper;
+import com.example.michaelbettis_term_scheduler.utils.DatePickerFragment;
 import com.example.michaelbettis_term_scheduler.R;
 
 import androidx.annotation.NonNull;
@@ -29,7 +29,7 @@ import java.util.Calendar;
 import java.util.Objects;
 
 import com.example.michaelbettis_term_scheduler.Entities.TermEntity;
-import com.example.michaelbettis_term_scheduler.SchedulerDatabase;
+import com.example.michaelbettis_term_scheduler.utils.SchedulerDatabase;
 import com.example.michaelbettis_term_scheduler.ViewModel.TermViewModel;
 
 public class AddNewTermActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, View.OnClickListener {
@@ -73,10 +73,10 @@ public class AddNewTermActivity extends AppCompatActivity implements DatePickerD
             SchedulerDatabase db = SchedulerDatabase.getInstance(getApplicationContext());
             lastTermEndDate = db.termDao().getLastEndDate(userId);
             editTextTermName.setText(intent.getStringExtra(TERM_NAME));
-            textViewTermStart.setText(Converters.sdf(intent.getStringExtra(TERM_START)));
-            textViewTermEnd.setText(Converters.sdf(intent.getStringExtra(TERM_END)));
+            textViewTermStart.setText(Helper.sdf(intent.getStringExtra(TERM_START)));
+            textViewTermEnd.setText(Helper.sdf(intent.getStringExtra(TERM_END)));
             try {
-                lastTermEndDate = Converters.shortStringToLong(textViewTermStart.getText().toString());
+                lastTermEndDate = Helper.shortStringToLong(textViewTermStart.getText().toString());
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -125,7 +125,7 @@ public class AddNewTermActivity extends AppCompatActivity implements DatePickerD
             TermEntity term = null;
             if (termId == -1) {
                 try {
-                    term = new TermEntity(name, Converters.stringToDate(startDate), Converters.stringToDate(endDate), userId);
+                    term = new TermEntity(name, Helper.stringToDate(startDate), Helper.stringToDate(endDate), userId);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -135,7 +135,7 @@ public class AddNewTermActivity extends AppCompatActivity implements DatePickerD
                 startActivity(intent);
             } else {
                 try {
-                    term = new TermEntity(name, Converters.stringToDate(startDate), Converters.stringToDate(endDate), userId);
+                    term = new TermEntity(name, Helper.stringToDate(startDate), Helper.stringToDate(endDate), userId);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -194,8 +194,8 @@ public class AddNewTermActivity extends AppCompatActivity implements DatePickerD
                 break;
             case R.id.term_end:
                 try {
-                    currentDate.putLong("setEndDate", Converters.shortStringToLong(textViewTermStart.getText().toString()) + (90 * 24 * 60 * 60 * 1000L));
-                    currentDate.putLong("setStartDate", Converters.shortStringToLong(textViewTermStart.getText().toString()) + (24 * 60 * 60 * 1000L));
+                    currentDate.putLong("setEndDate", Helper.shortStringToLong(textViewTermStart.getText().toString()) + (90 * 24 * 60 * 60 * 1000L));
+                    currentDate.putLong("setStartDate", Helper.shortStringToLong(textViewTermStart.getText().toString()) + (24 * 60 * 60 * 1000L));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }

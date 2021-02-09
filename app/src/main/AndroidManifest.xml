@@ -15,7 +15,7 @@
         android:fullBackupContent="@xml/backup_descriptor">
 
         <receiver
-            android:name=".MyReceiver"
+            android:name=".utils.MyReceiver"
             android:enabled="true"
             android:exported="true"
             android:permission="TODO" />

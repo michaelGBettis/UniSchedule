@@ -21,7 +21,7 @@ import com.example.michaelbettis_term_scheduler.Activities.CourseActivities.AddN
 
 import com.example.michaelbettis_term_scheduler.Activities.MainActivity;
 import com.example.michaelbettis_term_scheduler.R;
-import com.example.michaelbettis_term_scheduler.SchedulerDatabase;
+import com.example.michaelbettis_term_scheduler.utils.SchedulerDatabase;
 
 import com.example.michaelbettis_term_scheduler.Entities.NoteEntity;
 import com.example.michaelbettis_term_scheduler.ViewModel.NoteViewModel;

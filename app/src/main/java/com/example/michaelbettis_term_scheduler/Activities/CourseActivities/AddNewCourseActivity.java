@@ -8,8 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.michaelbettis_term_scheduler.Activities.TermActivities.AddNewTermActivity;
-import com.example.michaelbettis_term_scheduler.Converters;
-import com.example.michaelbettis_term_scheduler.DatePickerFragment;
+import com.example.michaelbettis_term_scheduler.utils.DatePickerFragment;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,7 +28,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.michaelbettis_term_scheduler.MyReceiver;
+import com.example.michaelbettis_term_scheduler.utils.MyReceiver;
 import com.example.michaelbettis_term_scheduler.R;
 
 import java.text.DateFormat;
@@ -39,6 +38,7 @@ import java.util.Objects;
 
 import com.example.michaelbettis_term_scheduler.Entities.CourseEntity;
 import com.example.michaelbettis_term_scheduler.ViewModel.CourseViewModel;
+import com.example.michaelbettis_term_scheduler.utils.Helper;
 
 public class AddNewCourseActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, View.OnClickListener {
     public static final String COURSE_ID = "com.example.michaelbettis_term_scheduler.Activities.COURSE_ID";
@@ -106,8 +106,8 @@ public class AddNewCourseActivity extends AppCompatActivity implements DatePicke
             getSupportActionBar().setTitle("Edit Course");
             courseStatus = intent.getStringExtra(AddNewCourseActivity.COURSE_STATUS);
             editTextCourseName.setText(intent.getStringExtra(COURSE_NAME));
-            textViewCourseStart.setText(Converters.sdf(intent.getStringExtra(COURSE_START)));
-            textViewCourseEnd.setText(Converters.sdf(intent.getStringExtra(COURSE_END)));
+            textViewCourseStart.setText(Helper.sdf(intent.getStringExtra(COURSE_START)));
+            textViewCourseEnd.setText(Helper.sdf(intent.getStringExtra(COURSE_END)));
             editTextMentorName.setText(intent.getStringExtra(MENTOR_NAME));
             editTextMentorPhone.setText(intent.getStringExtra(MENTOR_PHONE));
             editTextMentorEmail.setText(intent.getStringExtra(MENTOR_EMAIL));
@@ -169,7 +169,7 @@ public class AddNewCourseActivity extends AppCompatActivity implements DatePicke
             CourseEntity course = null;
             if (courseId == -1) {
                 try {
-                    course = new CourseEntity(name, Converters.stringToDate(startDate), Converters.stringToDate(endDate), courseStatus, mentorName, mentorPhone, mentorEmail, termId);
+                    course = new CourseEntity(name, Helper.stringToDate(startDate), Helper.stringToDate(endDate), courseStatus, mentorName, mentorPhone, mentorEmail, termId);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -177,7 +177,7 @@ public class AddNewCourseActivity extends AppCompatActivity implements DatePicke
                 Toast.makeText(this, "Course Added", Toast.LENGTH_SHORT).show();
             } else {
                 try {
-                    course = new CourseEntity(name, Converters.stringToDate(startDate), Converters.stringToDate(endDate), courseStatus, mentorName, mentorPhone, mentorEmail, termId);
+                    course = new CourseEntity(name, Helper.stringToDate(startDate), Helper.stringToDate(endDate), courseStatus, mentorName, mentorPhone, mentorEmail, termId);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -193,7 +193,7 @@ public class AddNewCourseActivity extends AppCompatActivity implements DatePicke
                 intent.putExtra("Notification", "This is a reminder that you start course, " + name + ", today!");
                 PendingIntent sender = PendingIntent.getBroadcast(AddNewCourseActivity.this, 0, intent, 0);
                 AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-                alarmManager.set(AlarmManager.RTC_WAKEUP, Converters.stringToDate(startDate).getTime(), sender);
+                alarmManager.set(AlarmManager.RTC_WAKEUP, Helper.stringToDate(startDate).getTime(), sender);
 
             }
             if (checkBoxEnd.isChecked()) {
@@ -201,7 +201,7 @@ public class AddNewCourseActivity extends AppCompatActivity implements DatePicke
                 intent.putExtra("Notification", "This is a reminder that you finish course, " + name + ", today!");
                 PendingIntent sender = PendingIntent.getBroadcast(AddNewCourseActivity.this, 1, intent, 0);
                 AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-                alarmManager.set(AlarmManager.RTC_WAKEUP, Converters.stringToDate(startDate).getTime(), sender);
+                alarmManager.set(AlarmManager.RTC_WAKEUP, Helper.stringToDate(startDate).getTime(), sender);
             }
 
             Intent intent = new Intent(AddNewCourseActivity.this, CourseListActivity.class);
@@ -250,8 +250,8 @@ public class AddNewCourseActivity extends AppCompatActivity implements DatePicke
         switch (view.getId()) {
             case R.id.course_start:
                 try {
-                    currentDate.putLong("setEndDate", Converters.stringToLong(termEnd));
-                    currentDate.putLong("setStartDate", Converters.stringToLong(termStart));
+                    currentDate.putLong("setEndDate", Helper.stringToLong(termEnd));
+                    currentDate.putLong("setStartDate", Helper.stringToLong(termStart));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -261,8 +261,8 @@ public class AddNewCourseActivity extends AppCompatActivity implements DatePicke
                 break;
             case R.id.course_end:
                 try {
-                    currentDate.putLong("setEndDate", Converters.stringToLong(termEnd));
-                    currentDate.putLong("setStartDate", Converters.shortStringToLong(textViewCourseStart.getText().toString()));
+                    currentDate.putLong("setEndDate", Helper.stringToLong(termEnd));
+                    currentDate.putLong("setStartDate", Helper.shortStringToLong(textViewCourseStart.getText().toString()));
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }

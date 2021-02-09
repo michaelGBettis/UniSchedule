@@ -5,9 +5,9 @@ import android.os.Bundle;
 
 import com.example.michaelbettis_term_scheduler.Activities.CourseActivities.CourseListActivity;
 import com.example.michaelbettis_term_scheduler.Activities.MainActivity;
-import com.example.michaelbettis_term_scheduler.Converters;
+import com.example.michaelbettis_term_scheduler.utils.Helper;
 import com.example.michaelbettis_term_scheduler.R;
-import com.example.michaelbettis_term_scheduler.SchedulerDatabase;
+import com.example.michaelbettis_term_scheduler.utils.SchedulerDatabase;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -85,8 +85,8 @@ public class TermDetailActivity extends AppCompatActivity {
 
         //setting view text
         textViewTermName.setText(name);
-        textViewStartDate.setText(Converters.sdf(start));
-        textViewEndDate.setText(Converters.sdf(end));
+        textViewStartDate.setText(Helper.sdf(start));
+        textViewEndDate.setText(Helper.sdf(end));
 
     }
 

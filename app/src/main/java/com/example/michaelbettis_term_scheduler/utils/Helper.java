@@ -1,25 +1,16 @@
-package com.example.michaelbettis_term_scheduler;
+package com.example.michaelbettis_term_scheduler.utils;
 
-import androidx.room.TypeConverter;
+import com.scottyab.aescrypt.AESCrypt;
 
+import java.security.GeneralSecurityException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Objects;
 
-public class Converters {
-
-    @TypeConverter
-    public static Date timestampToDate(Long timestamp) {
-        return timestamp == null ? null : new Date(timestamp);
-    }
-
-    @TypeConverter
-    public static Long dateToTimestamp(Date date) {
-        return date == null ? null : date.getTime();
-    }
-
+public class Helper {
+    //==============================Date converters===============================================//
     public static Date stringToDate(String string) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH);
         return sdf.parse(string);
@@ -55,4 +46,19 @@ public class Converters {
         return sdf2.format(Objects.requireNonNull(parsedDate));
     }
 
+    //===================================Java mail helper=========================================//
+    public static final String EMAIL = "27NlUuV1qTRpqvUVAs9/VA==";
+    public static final String PASSWORD = "0kKnejGHJYM0s2agxwrNpg==";
+
+    public static String decrypt(String key, String encryptedMsg) {
+
+        String messageAfterDecrypt = null;
+        try {
+            messageAfterDecrypt = AESCrypt.decrypt(key, encryptedMsg);
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        }
+        return messageAfterDecrypt;
+
+    }
 }
