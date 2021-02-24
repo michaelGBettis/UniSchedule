@@ -1,5 +1,6 @@
 package com.example.michaelbettis_term_scheduler.utils;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.scottyab.aescrypt.AESCrypt;
 
 import java.security.GeneralSecurityException;
@@ -59,6 +60,19 @@ public class Helper {
             e.printStackTrace();
         }
         return messageAfterDecrypt;
+
+    }
+
+    //===================================Form Validation==========================================//
+    public static boolean isInputEmpty(TextInputLayout textInput, String input) {
+
+        if (input.trim().isEmpty()) {
+            textInput.setError("Field cannot be empty");
+            return true;
+        } else {
+            textInput.setError(null);
+            return false;
+        }
 
     }
 }

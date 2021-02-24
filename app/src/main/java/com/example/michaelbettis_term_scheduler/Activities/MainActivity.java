@@ -14,6 +14,7 @@ import com.example.michaelbettis_term_scheduler.Activities.LoginActivities.SignU
 import com.example.michaelbettis_term_scheduler.Activities.TermActivities.TermListActivity;
 import com.example.michaelbettis_term_scheduler.Entities.UserEntity;
 import com.example.michaelbettis_term_scheduler.R;
+import com.example.michaelbettis_term_scheduler.utils.Helper;
 import com.example.michaelbettis_term_scheduler.utils.SchedulerDatabase;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -26,12 +27,15 @@ public class MainActivity extends AppCompatActivity {
     public static final String USER_ADDRESS = "com.example.michaelbettis_term_scheduler.Activities.USER_ADDRESS";
     public static final String USER_PHONE = "com.example.michaelbettis_term_scheduler.Activities.USER_PHONE";
     public static final String USER_MINOR = "com.example.michaelbettis_term_scheduler.Activities.USER_MINOR";
-    public static final String USER_SAT_SCORE = "com.example.michaelbettis_term_scheduler.Activities.USER_SAT_SCORE";
+    public static final String USER_GPA_SCORE = "com.example.michaelbettis_term_scheduler.Activities.USER_GPA_SCORE";
     public static final String USER_EMAIL = "com.example.michaelbettis_term_scheduler.Activities.USER_EMAIL";
     public static final String STUDENT_TYPE = "com.example.michaelbettis_term_scheduler.Activities.STUDENT_TYPE";
     public static final String COLLEGE_TYPE = "com.example.michaelbettis_term_scheduler.Activities.COLLEGE_TYPE";
-    private TextInputLayout textInputUsername;
-    private TextInputLayout textInputPassword;
+    private TextInputLayout usernameTextInput;
+    private TextInputLayout passwordTextInput;
+    private Button loginBtn;
+    private Button signUpBtn;
+    private Button resetPasswordBtn;
     SchedulerDatabase db;
     UserEntity currentUser;
 
@@ -44,33 +48,31 @@ public class MainActivity extends AppCompatActivity {
         //UGradStudent@test.com
 
         //initializes the values of the EditText fields
-        textInputUsername = findViewById(R.id.username);
-        textInputPassword = findViewById(R.id.password);
+        usernameTextInput = findViewById(R.id.username);
+        passwordTextInput = findViewById(R.id.password);
+        signUpBtn = findViewById(R.id.sign_up);
+        resetPasswordBtn = findViewById(R.id.reset_password);
+        loginBtn = findViewById(R.id.login);
 
-        Button login = findViewById(R.id.login);
-        login.setOnClickListener(new View.OnClickListener() {
+        loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String username = textInputUsername.getEditText().getText().toString().toUpperCase();
-                String password = textInputPassword.getEditText().getText().toString();
+                String username = usernameTextInput.getEditText().getText().toString().toUpperCase();
+                String password = passwordTextInput.getEditText().getText().toString();
 
-                if (validateInput(textInputPassword, password) & validateInput(textInputUsername, username)) {
+                if (validateLogin(username, password)) {
 
-                    if (validateLogin(username, password)) {
-
-                        Intent intent = new Intent(MainActivity.this, TermListActivity.class);
-                        intent.putExtra(MainActivity.USER_ID, currentUser.getUser_id());
-                        startActivity(intent);
-                        textInputUsername.getEditText().setText("");
-                        textInputPassword.getEditText().setText("");
-                    }
-
+                    Intent intent = new Intent(MainActivity.this, TermListActivity.class);
+                    intent.putExtra(MainActivity.USER_ID, currentUser.getUser_id());
+                    startActivity(intent);
+                    usernameTextInput.getEditText().setText("");
+                    passwordTextInput.getEditText().setText("");
                 }
             }
         });
 
-        Button sign_up = findViewById(R.id.sign_up);
-        sign_up.setOnClickListener(new View.OnClickListener() {
+
+        signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
@@ -79,8 +81,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Button resetPW = findViewById(R.id.reset_password);
-        resetPW.setOnClickListener(new View.OnClickListener() {
+        resetPasswordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, ResetPasswordActivity.class);
@@ -94,6 +95,11 @@ public class MainActivity extends AppCompatActivity {
         db = SchedulerDatabase.getInstance(getApplicationContext());
         currentUser = db.userDao().validateLogin(username, password);
 
+
+        if (Helper.isInputEmpty(usernameTextInput, password) | Helper.isInputEmpty(passwordTextInput, username)) {
+            return false;
+        }
+
         if (currentUser == null) {
             Toast.makeText(MainActivity.this, "Incorrect email or password", Toast.LENGTH_SHORT).show();
             return false;
@@ -101,15 +107,4 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    private boolean validateInput(TextInputLayout textInput, String input) {
-
-        if (input.isEmpty()) {
-            textInput.setError("Field cannot be empty");
-            return false;
-        } else {
-            textInput.setError(null);
-            return true;
-        }
-
-    }
 }

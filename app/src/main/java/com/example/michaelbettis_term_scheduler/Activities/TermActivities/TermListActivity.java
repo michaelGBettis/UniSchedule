@@ -206,7 +206,7 @@ public class TermListActivity extends AppCompatActivity {
         intent.putExtra(MainActivity.STUDENT_TYPE, currentUser.getUser_type());
         intent.putExtra(MainActivity.COLLEGE_TYPE, currentUser.getCollege_type());
         intent.putExtra(MainActivity.USER_MINOR, currentUser.getMinor());
-        intent.putExtra(MainActivity.USER_SAT_SCORE, currentUser.getSat_score());
+        intent.putExtra(MainActivity.USER_GPA_SCORE, currentUser.getSat_score());
         startActivity(intent);
     }
 

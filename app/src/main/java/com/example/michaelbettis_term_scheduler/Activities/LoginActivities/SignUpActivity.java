@@ -1,280 +1,288 @@
 package com.example.michaelbettis_term_scheduler.Activities.LoginActivities;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.michaelbettis_term_scheduler.Activities.MainActivity;
+import com.example.michaelbettis_term_scheduler.Activities.TermActivities.TermListActivity;
 import com.example.michaelbettis_term_scheduler.Entities.UserEntity;
 import com.example.michaelbettis_term_scheduler.R;
-import com.example.michaelbettis_term_scheduler.utils.SchedulerDatabase;
 import com.example.michaelbettis_term_scheduler.ViewModel.UserViewModel;
+import com.example.michaelbettis_term_scheduler.utils.Helper;
+import com.example.michaelbettis_term_scheduler.utils.SchedulerDatabase;
+import com.google.android.material.textfield.TextInputLayout;
 
-import java.util.Objects;
+import java.sql.SQLOutput;
+import java.util.regex.Pattern;
+
 
 public class SignUpActivity extends AppCompatActivity {
-
+    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!?.@#$%^&+=])(?=\\S+$).{8,}$");
     int userId;
 
-    private EditText editTextUserFName;
-    private EditText editTextUserMName;
-    private EditText editTextUserLName;
-    private EditText editTextUserAddress;
-    private EditText editTextUserPhone;
-    private EditText editTextUserEmail;
-    private EditText editTextUserMinor;
-    private EditText editTextUserSATScore;
-    private EditText editTextUserPassword;
-    private EditText editTextUserPasswordChk;
-    private Spinner spinnerStudentType;
-    private Spinner spinnerCollegeType;
+    private TextInputLayout userFNameTextInput;
+    private TextInputLayout userMNameTextInput;
+    private TextInputLayout userLNameTextInput;
+    private TextInputLayout userAddressTextInput;
+    private TextInputLayout userPhoneTextInput;
+    private TextInputLayout userEmailTextInput;
+    private TextInputLayout userMinorTextInput;
+    private TextInputLayout userGPAScoreTextInput;
+    private TextInputLayout userPasswordTextInput;
+    private TextInputLayout userPasswordChkTextInput;
+    private TextInputLayout studentTypeTextInput;
+    private TextInputLayout collegeTypeTextInput;
+    private AutoCompleteTextView studentTypeDropdown;
+    private AutoCompleteTextView collegeTypeDropdown;
+    private TextView titleTextView;
+    private Button createAccountBtn;
     private UserViewModel userViewModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        Objects.requireNonNull(getSupportActionBar()).setTitle("Create Account");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        editTextUserFName = findViewById(R.id.user_first_name);
-        editTextUserMName = findViewById(R.id.user_middle_name);
-        editTextUserLName = findViewById(R.id.user_last_name);
-        editTextUserAddress = findViewById(R.id.user_address);
-        editTextUserPhone = findViewById(R.id.user_Phone);
-        editTextUserEmail = findViewById(R.id.user_email);
-        editTextUserMinor = findViewById(R.id.user_minor);
-        editTextUserSATScore = findViewById(R.id.user_sat_score);
-        editTextUserPassword = findViewById(R.id.user_password);
-        editTextUserPasswordChk = findViewById(R.id.user_password_check);
-        spinnerStudentType = findViewById(R.id.student_type);
-        spinnerCollegeType = findViewById(R.id.college_type);
-        Button create_account = findViewById(R.id.create_account);
+        userFNameTextInput = findViewById(R.id.user_first_name);
+        userMNameTextInput = findViewById(R.id.user_middle_name);
+        userLNameTextInput = findViewById(R.id.user_last_name);
+        userAddressTextInput = findViewById(R.id.user_address);
+        userPhoneTextInput = findViewById(R.id.user_Phone);
+        userEmailTextInput = findViewById(R.id.user_email);
+        userMinorTextInput = findViewById(R.id.user_minor);
+        userGPAScoreTextInput = findViewById(R.id.user_gpa_score);
+        userPasswordTextInput = findViewById(R.id.user_password);
+        userPasswordChkTextInput = findViewById(R.id.user_password_check);
+        studentTypeTextInput = findViewById(R.id.student_type);
+        collegeTypeTextInput = findViewById(R.id.college_type);
+        studentTypeDropdown = findViewById(R.id.student_type_text);
+        collegeTypeDropdown = findViewById(R.id.college_type_text);
+        createAccountBtn = findViewById(R.id.create_account);
+        titleTextView = findViewById(R.id.create_account_title);
 
-        //sets the values for the parent spinners
-        final ArrayAdapter<String> studentAdapter = new ArrayAdapter<>(SignUpActivity.this,
-                android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.student_type));
-        studentAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerStudentType.setAdapter(studentAdapter);
+        //creates or provides a view model instance
+        userViewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(UserViewModel.class);
 
+        //sets the values for the student type menu
+        final ArrayAdapter<String> studentTypeAdapter = new ArrayAdapter<>(
+                SignUpActivity.this,
+                android.R.layout.simple_spinner_dropdown_item,
+                getResources().getStringArray(R.array.student_type));
+        studentTypeDropdown.setAdapter(studentTypeAdapter);
 
-        final ArrayAdapter<String> collegeAdapter = new ArrayAdapter<>(SignUpActivity.this,
-                android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.college_type));
-        collegeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerCollegeType.setAdapter(collegeAdapter);
+        //sets the values for the college type menu
+        final ArrayAdapter<String> collegeTypeAdapter = new ArrayAdapter<>(
+                SignUpActivity.this,
+                android.R.layout.simple_spinner_dropdown_item,
+                getResources().getStringArray(R.array.college_type));
+        collegeTypeDropdown.setAdapter(collegeTypeAdapter);
 
-        //checks the value of the spinner and sets the values of the subclass specific fields
-        spinnerStudentType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        //checks the value of the student type and sets the subclass specific field accordingly
+        studentTypeDropdown.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                if (spinnerStudentType.getSelectedItem().equals("Graduate")) {
-                    editTextUserMinor.setVisibility(View.VISIBLE);
-                    editTextUserSATScore.setVisibility(View.GONE);
+                if (studentTypeDropdown.getEditableText().toString().equals("Graduate")) {
+                    userMinorTextInput.setVisibility(View.VISIBLE);
+                    userGPAScoreTextInput.setVisibility(View.GONE);
                 } else {
-                    editTextUserSATScore.setVisibility(View.VISIBLE);
-                    editTextUserMinor.setVisibility(View.GONE);
+                    userGPAScoreTextInput.setVisibility(View.VISIBLE);
+                    userMinorTextInput.setVisibility(View.GONE);
                 }
 
             }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
         });
-
+        //Gets and sets the passed in values
         Intent intent = getIntent();
         userId = getIntent().getIntExtra(MainActivity.USER_ID, -1);
         if (intent.hasExtra(MainActivity.USER_ID)) {
-            getSupportActionBar().setTitle("Edit User Info");
-            create_account.setText("Update User");
-            editTextUserFName.setText(intent.getStringExtra(MainActivity.USER_F_NAME));
-            editTextUserMName.setText(intent.getStringExtra(MainActivity.USER_M_NAME));
-            editTextUserLName.setText(intent.getStringExtra(MainActivity.USER_L_NAME));
-            editTextUserAddress.setText(intent.getStringExtra(MainActivity.USER_ADDRESS));
-            editTextUserPhone.setText(intent.getStringExtra(MainActivity.USER_PHONE));
-            editTextUserEmail.setText(intent.getStringExtra(MainActivity.USER_EMAIL));
+            titleTextView.setText("Account Information");
+            createAccountBtn.setText("Update User");
+            userFNameTextInput.getEditText().setText(intent.getStringExtra(MainActivity.USER_F_NAME));
+            userMNameTextInput.getEditText().setText(intent.getStringExtra(MainActivity.USER_M_NAME));
+            userLNameTextInput.getEditText().setText(intent.getStringExtra(MainActivity.USER_L_NAME));
+            userAddressTextInput.getEditText().setText(intent.getStringExtra(MainActivity.USER_ADDRESS));
+            userPhoneTextInput.getEditText().setText(intent.getStringExtra(MainActivity.USER_PHONE));
+            userEmailTextInput.getEditText().setText(intent.getStringExtra(MainActivity.USER_EMAIL));
+            studentTypeDropdown.setText(intent.getStringExtra(MainActivity.STUDENT_TYPE), false);
+            collegeTypeDropdown.setText(intent.getStringExtra(MainActivity.COLLEGE_TYPE), false);
 
-            //gets and sets spinner value
-            int sSelectionPosition = studentAdapter.getPosition(intent.getStringExtra(MainActivity.STUDENT_TYPE));
-            spinnerStudentType.setSelection(sSelectionPosition);
-            int cSelectionPosition = collegeAdapter.getPosition(intent.getStringExtra(MainActivity.COLLEGE_TYPE));
-            spinnerCollegeType.setSelection(cSelectionPosition);
-
-
-            if (spinnerStudentType.getSelectedItem().equals("Graduate")) {
-                editTextUserMinor.setText(intent.getStringExtra(MainActivity.USER_MINOR));
+            if (studentTypeDropdown.getEditableText().toString().equals("Graduate")) {
+                userMinorTextInput.setVisibility(View.VISIBLE);
+                userMinorTextInput.getEditText().setText(intent.getStringExtra(MainActivity.USER_MINOR));
             } else {
-
-                double sat = intent.getDoubleExtra(MainActivity.USER_SAT_SCORE, -1);
-                editTextUserSATScore.setText(Double.toString(sat));
+                double gpa = intent.getDoubleExtra(MainActivity.USER_GPA_SCORE, -1);
+                userGPAScoreTextInput.setVisibility(View.VISIBLE);
+                userGPAScoreTextInput.getEditText().setText(Double.toString(gpa));
             }
 
         }
 
-        create_account.setOnClickListener(new View.OnClickListener() {
+        createAccountBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 createAccount();
             }
         });
 
-        //creates or provides a view model instance
-        userViewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(UserViewModel.class);
 
     }
 
-    @SuppressWarnings("SpellCheckingInspection")
+
     public void createAccount() {
-        String fName = editTextUserFName.getText().toString();
-        String mName = editTextUserMName.getText().toString();
-        String lName = editTextUserLName.getText().toString();
-        String address = editTextUserAddress.getText().toString();
-        String phone = editTextUserPhone.getText().toString();
-        String email = editTextUserEmail.getText().toString().toUpperCase();
-        String password = editTextUserPassword.getText().toString();
-        String passwordChk = editTextUserPasswordChk.getText().toString();
-        String type = spinnerStudentType.getSelectedItem().toString();
-        String college = spinnerCollegeType.getSelectedItem().toString();
-        String program = type + " " + college;
+        String fName = userFNameTextInput.getEditText().getText().toString();
+        String mName = userMNameTextInput.getEditText().getText().toString();
+        String lName = userLNameTextInput.getEditText().getText().toString();
+        String address = userAddressTextInput.getEditText().getText().toString();
+        String phone = userPhoneTextInput.getEditText().getText().toString();
+        String email = userEmailTextInput.getEditText().getText().toString().toUpperCase();
+        String password = userPasswordTextInput.getEditText().getText().toString();
+        String passwordChk = userPasswordChkTextInput.getEditText().getText().toString();
+        String studentType = studentTypeDropdown.getEditableText().toString();
+        String collegeType = collegeTypeDropdown.getEditableText().toString();
+        String program = studentType + " " + collegeType;
 
-        //check to see if all fields have a value and are not blank spaces
-        if (fName.trim().isEmpty() || mName.trim().isEmpty() || lName.trim().isEmpty() ||
-                address.trim().isEmpty() || phone.trim().isEmpty() || email.trim().isEmpty() ||
-                password.trim().isEmpty() || passwordChk.trim().isEmpty()) {
 
-            Toast.makeText(this, "Please enter a value in all fields", Toast.LENGTH_SHORT).show();
+        if (Helper.isInputEmpty(userFNameTextInput, fName) | Helper.isInputEmpty(userMNameTextInput, mName)
+                | Helper.isInputEmpty(userLNameTextInput, lName) | Helper.isInputEmpty(userAddressTextInput, address)
+                | Helper.isInputEmpty(userPhoneTextInput, phone) | !isValidEmail(userEmailTextInput, email)
+                | Helper.isInputEmpty(studentTypeTextInput, studentType) | Helper.isInputEmpty(collegeTypeTextInput, collegeType)
+                | isExtraStudentInputEmpty(studentType) | !isValidPassword(userPasswordTextInput, password)
+                | !isValidPassword(userPasswordChkTextInput, passwordChk)) {
             return;
         }
 
-        //checks to see if the password matches the password checker
-        if (!password.equals(passwordChk)) {
-
-            Toast.makeText(this, "Password does not match", Toast.LENGTH_SHORT).show();
+        if (!isPasswordMatch(password, passwordChk, userPasswordChkTextInput)) {
             return;
-
         }
 
-        if (userId == -1) {
+        if (isCurrentUser(userId)) {
 
-            if (isCurrentUser(email)) {
-                Toast.makeText(this, "This email address is already associated with an account.", Toast.LENGTH_SHORT).show();
-                return;
+            if (studentType.equals("Graduate")) {
+
+                UserEntity graduate = new UserEntity(fName, mName, lName, address, phone, email, password, studentType, collegeType, program, userMinorTextInput.getEditText().getText().toString());
+                graduate.setUser_id(userId);
+                userViewModel.update(graduate);
+
+            } else {
+
+                UserEntity undergrad = new UserEntity(fName, mName, lName, address, phone, email, password, studentType, collegeType, program, Double.parseDouble(userGPAScoreTextInput.getEditText().getText().toString()));
+                undergrad.setUser_id(userId);
+                userViewModel.update(undergrad);
+
             }
-
-            //checks to see if the student is an Undergraduate or not, if so
-            //gets the SAT score
-            if (spinnerStudentType.getSelectedItem().equals("Undergraduate")) {
-                String satScore = editTextUserSATScore.getText().toString();
-
-                //checks to see if the SAT score has a value and if that value is less than
-                //or equal to 4.0, if so inserts a new Undergraduate User
-                if (!satScore.trim().isEmpty() && Double.parseDouble(satScore) <= 4.0) {
-
-                    UserEntity undergrad = new UserEntity(fName, mName, lName, address, phone, email, password, type, college, program, Double.parseDouble(satScore));
-                    userViewModel.insert(undergrad);
-                    Toast.makeText(this, "New user created", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
-                    startActivity(intent);
-
-                } else {
-
-                    Toast.makeText(this, "Please enter a valid value for you SAT score", Toast.LENGTH_SHORT).show();
-                    return;
-
-                }
-            }
-
-            //checks to see if the student is an Graduate or not, if so
-            //gets the Users college minor
-            if (spinnerStudentType.getSelectedItem().equals("Graduate")) {
-                String minor = editTextUserMinor.getText().toString();
-
-                //checks to see if the minor textbox has a value, if so inserts a new Graduate User
-                if (!minor.trim().isEmpty()) {
-
-                    UserEntity graduate = new UserEntity(fName, mName, lName, address, phone, email, password, type, college, program, minor);
-                    userViewModel.insert(graduate);
-                    Toast.makeText(this, "New user created", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
-                    startActivity(intent);
-
-                } else {
-
-                    Toast.makeText(this, "Please enter a value in the Minor field", Toast.LENGTH_SHORT).show();
-
-                }
-            }
+            Toast.makeText(this, "User information updated", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(SignUpActivity.this, TermListActivity.class);
+            startActivity(intent);
 
         } else {
 
-            //checks to see if the student is an Undergraduate or not, if so
-            //gets the SAT score
-            if (spinnerStudentType.getSelectedItem().equals("Undergraduate")) {
-                String satScore = editTextUserSATScore.getText().toString();
+            if (studentType.equals("Graduate")) {
 
-                //checks to see if the SAT score has a value and if that value is less than
-                //or equal to 4.0, if so inserts a new Undergraduate User
-                if (!satScore.trim().isEmpty() && Double.parseDouble(satScore) <= 4.0) {
+                 UserEntity graduate = new UserEntity(fName, mName, lName, address, phone, email, password, studentType, collegeType, program, userMinorTextInput.getEditText().getText().toString());
+                userViewModel.insert(graduate);
 
-                    UserEntity undergrad = new UserEntity(fName, mName, lName, address, phone, email, password, type, college, program, Double.parseDouble(satScore));
-                    undergrad.setUser_id(userId);
-                    userViewModel.update(undergrad);
-                    Toast.makeText(this, "User updated created", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
-                    startActivity(intent);
-
-                } else {
-
-                    Toast.makeText(this, "Please enter a valid value for you SAT score", Toast.LENGTH_SHORT).show();
-                    return;
-
-                }
+            } else {
+                UserEntity undergrad = new UserEntity(fName, mName, lName, address, phone, email, password, studentType, collegeType, program, Double.parseDouble(userGPAScoreTextInput.getEditText().getText().toString()));
+                userViewModel.insert(undergrad);
             }
 
-            //checks to see if the student is an Graduate or not, if so
-            //gets the Users college minor
-            if (spinnerStudentType.getSelectedItem().equals("Graduate")) {
-                String minor = editTextUserMinor.getText().toString();
+            Toast.makeText(this, "New user created", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
+            startActivity(intent);
+        }
 
-                //checks to see if the minor textbox has a value, if so inserts a new Graduate User
-                if (!minor.trim().isEmpty()) {
 
-                    UserEntity graduate = new UserEntity(fName, mName, lName, address, phone, email, password, type, college, program, minor);
-                    graduate.setUser_id(userId);
-                    userViewModel.update(graduate);
-                    Toast.makeText(this, "User updated created", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
-                    startActivity(intent);
+    }
 
-                } else {
+    private boolean isValidEmail(TextInputLayout emailInput, String email) {
+        SchedulerDatabase db = SchedulerDatabase.getInstance(getApplicationContext());
+        UserEntity isDuplicateEmail = db.userDao().validateUserByEmail(email);
 
-                    Toast.makeText(this, "Please enter a value in the Minor field", Toast.LENGTH_SHORT).show();
+        if (Helper.isInputEmpty(emailInput, email)) {
+            return false;
+        } else if (isDuplicateEmail != null) {
+            emailInput.setError("Email is invalid or already taken.");
+            return false;
+        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            emailInput.setError("Email is invalid or already taken.");
+            return false;
+        } else {
+            emailInput.setError(null);
+            return true;
+        }
 
-                }
-            }
+    }
+
+    private boolean isValidPassword(TextInputLayout passwordInput, String password) {
+
+        if (Helper.isInputEmpty(passwordInput, password)) {
+            return false;
+        } else if (!PASSWORD_PATTERN.matcher(password).matches()) {
+            passwordInput.setError("Password too weak.");
+            return false;
+        } else {
+            passwordInput.setError(null);
+            return true;
         }
     }
 
-    //checks the users email against the emails in the db to see if the provided email
-    //has an account already associated with it
-    private boolean isCurrentUser(String username) {
-        SchedulerDatabase db = SchedulerDatabase.getInstance(getApplicationContext());
-        UserEntity currentUser = db.userDao().validateUserByEmail(username);
+    private boolean isPasswordMatch(String password, String passwordChk, TextInputLayout passwordChkInput) {
+        if (password.equals(passwordChk)) {
+            passwordChkInput.setError(null);
+            return true;
+        } else {
+            passwordChkInput.setError("Password does not match.");
+            return false;
+        }
 
-        return currentUser != null;
     }
+
+    private boolean isCurrentUser(int userId) {
+        if (userId == -1) {
+            return false;
+        }
+        return true;
+
+    }
+
+    private boolean isValidGPAScore(TextInputLayout gpaScoreInput, String gpaScore) {
+
+        if (Helper.isInputEmpty(gpaScoreInput, gpaScore)) {
+            return false;
+        } else if (Double.parseDouble(gpaScore) > 4.0) {
+            gpaScoreInput.setError("enter a valid GPA score");
+            return false;
+        } else {
+            gpaScoreInput.setError(null);
+            return true;
+        }
+
+    }
+
+    private boolean isExtraStudentInputEmpty(String studentType) {
+
+        if (studentType.equals("Graduate")) {
+            System.out.println(userMinorTextInput.getEditText().getText().toString());
+            return Helper.isInputEmpty(userMinorTextInput, userMinorTextInput.getEditText().getText().toString());
+        } else if (studentType.equals("Undergraduate")) {
+            System.out.println(userGPAScoreTextInput.getEditText().getText().toString());
+            return Helper.isInputEmpty(userGPAScoreTextInput, userGPAScoreTextInput.getEditText().getText().toString());
+        } else {
+            return true;
+        }
+    }
+
 }
