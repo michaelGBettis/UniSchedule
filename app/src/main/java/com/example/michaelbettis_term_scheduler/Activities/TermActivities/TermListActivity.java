@@ -3,8 +3,10 @@ package com.example.michaelbettis_term_scheduler.Activities.TermActivities;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Canvas;
 import android.os.Bundle;
 
+import com.example.michaelbettis_term_scheduler.Activities.CourseActivities.CourseListActivity;
 import com.example.michaelbettis_term_scheduler.Activities.LoginActivities.SignUpActivity;
 import com.example.michaelbettis_term_scheduler.Activities.MainActivity;
 import com.example.michaelbettis_term_scheduler.utils.Converters;
@@ -20,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -43,6 +46,8 @@ import java.util.Objects;
 import com.example.michaelbettis_term_scheduler.Entities.TermEntity;
 import com.example.michaelbettis_term_scheduler.ViewModel.TermViewModel;
 
+import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
+
 @TypeConverters(Converters.class)
 public class TermListActivity extends AppCompatActivity {
 
@@ -64,7 +69,7 @@ public class TermListActivity extends AppCompatActivity {
         userID = intent.getIntExtra(MainActivity.USER_ID, -1);
 
         //sets the recycle view
-        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        final RecyclerView recyclerView = findViewById(R.id.recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
@@ -98,28 +103,63 @@ public class TermListActivity extends AppCompatActivity {
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
 
+                int position = viewHolder.getAdapterPosition();
                 db = SchedulerDatabase.getInstance(getApplicationContext());
-                final int countNum = db.courseDao().getCourseCount(adapter.getTermAt(viewHolder.getAdapterPosition()).getTerm_id());
 
-                if (countNum > 0) {
+                switch (direction) {
+                    case ItemTouchHelper.LEFT:
 
-                    Toast.makeText(TermListActivity.this, "Can not delete a Term with associated Courses", Toast.LENGTH_SHORT).show();
-                    adapter.notifyDataSetChanged();
+                        Intent intent = new Intent(TermListActivity.this, AddNewTermActivity.class);
+                        intent.putExtra(AddNewTermActivity.TERM_ID, adapter.getTermAt(position).getTerm_id());
+                        intent.putExtra(AddNewTermActivity.TERM_NAME, adapter.getTermAt(position).getTerm_name());
+                        intent.putExtra(AddNewTermActivity.TERM_START, adapter.getTermAt(position).getStart_date().toString());
+                        intent.putExtra(AddNewTermActivity.TERM_END, adapter.getTermAt(position).getEnd_date().toString());
+                        intent.putExtra(MainActivity.USER_ID, userID);
+                        startActivity(intent);
+                        adapter.notifyDataSetChanged();
 
-                } else {
+                        break;
+                    case ItemTouchHelper.RIGHT:
 
-                    termViewModel.delete(adapter.getTermAt(viewHolder.getAdapterPosition()));
-                    Toast.makeText(TermListActivity.this, "Term Deleted", Toast.LENGTH_SHORT).show();
+                        final int countNum = db.courseDao().getCourseCount(adapter.getTermAt(position).getTerm_id());
+
+                        if (countNum > 0) {
+
+                            Toast.makeText(TermListActivity.this, "Can not delete a Term with associated Courses", Toast.LENGTH_SHORT).show();
+                            adapter.notifyDataSetChanged();
+
+                        } else {
+
+                            termViewModel.delete(adapter.getTermAt(position));
+                            adapter.notifyItemRemoved(position);
+                            Toast.makeText(TermListActivity.this, "Term Deleted", Toast.LENGTH_SHORT).show();
+                        }
+
+                        break;
+
                 }
-
-
             }
+
+            @Override
+            public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+
+                new RecyclerViewSwipeDecorator.Builder(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                        .addSwipeLeftBackgroundColor(ContextCompat.getColor(TermListActivity.this, R.color.colorSecondary))
+                        .addSwipeLeftActionIcon(R.drawable.ic_edit)
+                        .addSwipeRightBackgroundColor(ContextCompat.getColor(TermListActivity.this, R.color.colorAccentSecond))
+                        .addSwipeRightActionIcon(R.drawable.ic_delete)
+                        .create()
+                        .decorate();
+
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+
         }).attachToRecyclerView(recyclerView);
 
         adapter.setOnItemClickListener(new TermAdapter.onItemClickListener() {
             @Override
             public void onItemClick(TermEntity term) {
-                Intent intent = new Intent(TermListActivity.this, TermDetailActivity.class);
+                Intent intent = new Intent(TermListActivity.this, CourseListActivity.class);
                 intent.putExtra(AddNewTermActivity.TERM_ID, term.getTerm_id());
                 intent.putExtra(AddNewTermActivity.TERM_NAME, term.getTerm_name());
                 intent.putExtra(AddNewTermActivity.TERM_START, term.getStart_date().toString());

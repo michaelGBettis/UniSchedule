@@ -3,7 +3,9 @@ package com.example.michaelbettis_term_scheduler.Activities.CourseActivities;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.example.michaelbettis_term_scheduler.Activities.AssessmentActivities.AssessmentListActivity;
 import com.example.michaelbettis_term_scheduler.Activities.MainActivity;
+import com.example.michaelbettis_term_scheduler.Activities.NoteActivities.NoteListActivity;
 import com.example.michaelbettis_term_scheduler.Activities.TermActivities.AddNewTermActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -97,21 +99,24 @@ public class CourseListActivity extends AppCompatActivity {
 
         adapter.setOnItemClickListener(new CourseAdapter.onItemClickListener() {
             @Override
-            public void onItemClick(CourseEntity course) {
-                Intent intent = new Intent(CourseListActivity.this, CourseDetailActivity.class);
-                intent.putExtra(AddNewCourseActivity.COURSE_ID, course.getCourse_id());
-                intent.putExtra(AddNewCourseActivity.COURSE_NAME, course.getCourse_name());
-                intent.putExtra(AddNewCourseActivity.COURSE_START, course.getStart_date().toString());
-                intent.putExtra(AddNewCourseActivity.COURSE_END, course.getEnd_date().toString());
-                intent.putExtra(AddNewCourseActivity.COURSE_STATUS, course.getCourse_status());
-                intent.putExtra(AddNewCourseActivity.MENTOR_NAME, course.getCourse_mentor());
-                intent.putExtra(AddNewCourseActivity.MENTOR_PHONE, course.getMentor_phone());
-                intent.putExtra(AddNewCourseActivity.MENTOR_EMAIL, course.getMentor_email());
-                intent.putExtra(AddNewTermActivity.TERM_START, termStart);
-                intent.putExtra(AddNewTermActivity.TERM_END, termEnd);
-                intent.putExtra(AddNewTermActivity.TERM_ID, termId);
-                startActivity(intent);
+            public void onCourseClick(CourseEntity course) {
 
+            }
+
+            @Override
+            public void onAssessmentsClick(CourseEntity course) {
+                Intent intent = new Intent(CourseListActivity.this, AssessmentListActivity.class);
+                intent.putExtra(AddNewCourseActivity.COURSE_ID, course.getCourse_id());
+                intent.putExtra(AddNewCourseActivity.COURSE_START, course.getStart_date());
+                intent.putExtra(AddNewCourseActivity.COURSE_END, course.getEnd_date());
+                startActivity(intent);
+            }
+
+            @Override
+            public void onNotesClick(CourseEntity course) {
+                Intent intent = new Intent(CourseListActivity.this, NoteListActivity.class);
+                intent.putExtra(AddNewCourseActivity.COURSE_ID, course.getCourse_id());
+                startActivity(intent);
             }
         });
 

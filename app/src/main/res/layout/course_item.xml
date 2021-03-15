@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    android:id="@+id/base_cardview"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginRight="8dp"
@@ -11,8 +13,10 @@
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
         android:paddingRight="8dp"
-        android:paddingLeft="8dp">
+        android:paddingLeft="8dp"
+        android:transitionName="example_transition">
 
+        <!-- Title, secondary and supporting text -->
         <TextView
             android:id="@+id/text_view_title"
             android:layout_width="wrap_content"
@@ -48,20 +52,60 @@
             android:text="End Date" />
 
         <TextView
-            android:id="@+id/text_view_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/text_view_start_date"
-            android:text="Status: " />
-
-        <TextView
             android:id="@+id/text_view_status_indicator"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/text_view_start_date"
-            android:layout_toEndOf="@id/text_view_status"
             android:text="TBD" />
+
+        <!-- Expanded View -->
+        <RelativeLayout
+            android:id="@+id/course_hidden_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/text_view_status_indicator"
+            android:visibility="visible">
+
+
+            <TextView
+                android:id="@+id/instructor_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Instructor Name: TBD"/>
+
+            <TextView
+                android:id="@+id/instructor_phone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Instructor Phone: TBD"
+                android:layout_below="@id/instructor_name"/>
+
+            <TextView
+                android:id="@+id/instructor_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mentor Email: TBD"
+                android:layout_below="@id/instructor_phone" />
+
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/assessments_button"
+                style="?attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/instructor_email"
+                android:text="Assessments" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/notes_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@+id/assessments_button"
+                android:layout_below="@id/instructor_email"
+                android:text="Notes"
+                style="?attr/borderlessButtonStyle"
+                />
+        </RelativeLayout>
 
     </RelativeLayout>
 
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

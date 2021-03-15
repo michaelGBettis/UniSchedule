@@ -3,7 +3,9 @@ package com.example.michaelbettis_term_scheduler.Adapters;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Filter;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,6 +24,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseHold
     private List<CourseEntity> courses = new ArrayList<>();
     private List<CourseEntity> coursesFull = new ArrayList<>();
     private onItemClickListener listener;
+    int mExpandedPosition = -1;
 
     //sets the recycler view layout
     @NonNull
@@ -35,7 +38,19 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseHold
 
     //passes the values of the courses to the view holder
     @Override
-    public void onBindViewHolder(@NonNull CourseAdapter.CourseHolder holder, int position) {
+    public void onBindViewHolder(@NonNull CourseAdapter.CourseHolder holder, final int position) {
+
+        final boolean isExpanded = position==mExpandedPosition;
+        holder.hiddenView.setVisibility(isExpanded?View.VISIBLE:View.GONE);
+        holder.itemView.setActivated(isExpanded);
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mExpandedPosition = isExpanded ? -1:position;
+                notifyDataSetChanged();
+
+            }
+        });
 
         CourseEntity currentCourse = courses.get(position);
         holder.textViewTitle.setText(currentCourse.getCourse_name());
@@ -105,6 +120,9 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseHold
         private final TextView textViewStartDate;
         private final TextView textViewEndDate;
         private final TextView textViewStatus;
+        private final RelativeLayout hiddenView;
+        private final Button assessmentsBtn;
+        private final Button notesBtn;
 
         public CourseHolder(@NonNull View itemView) {
             super(itemView);
@@ -112,13 +130,26 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseHold
             textViewStartDate = itemView.findViewById(R.id.text_view_start_date);
             textViewEndDate = itemView.findViewById(R.id.text_view_end_date);
             textViewStatus = itemView.findViewById(R.id.text_view_status_indicator);
+            hiddenView = itemView.findViewById(R.id.course_hidden_view);
+            assessmentsBtn = itemView.findViewById(R.id.assessments_button);
+            notesBtn = itemView.findViewById(R.id.notes_button);
 
-            itemView.setOnClickListener(new View.OnClickListener() {
+            assessmentsBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     int position = getAdapterPosition();
                     if (listener != null && position != RecyclerView.NO_POSITION) {
-                        listener.onItemClick(courses.get(position));
+                        listener.onAssessmentsClick(courses.get(position));
+                    }
+                }
+            });
+
+            notesBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = getAdapterPosition();
+                    if (listener != null && position != RecyclerView.NO_POSITION) {
+                        listener.onNotesClick(courses.get(position));
                     }
                 }
             });
@@ -127,7 +158,12 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseHold
 
     //onClickListener for the course items
     public interface onItemClickListener {
-        void onItemClick(CourseEntity course);
+        void onCourseClick(CourseEntity course);
+
+        void onAssessmentsClick(CourseEntity course);
+
+        void onNotesClick(CourseEntity course);
+
     }
 
     //sets the onClickListener

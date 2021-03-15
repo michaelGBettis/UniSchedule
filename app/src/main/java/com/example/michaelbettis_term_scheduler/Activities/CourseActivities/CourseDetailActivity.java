@@ -35,12 +35,12 @@ import com.example.michaelbettis_term_scheduler.utils.Helper;
 public class CourseDetailActivity extends AppCompatActivity {
 
     private int courseId;
+    private String courseStart;
+    private String courseEnd;
     private int termId;
     private String termStart;
     private String termEnd;
     private String name;
-    private String courseStart;
-    private String courseEnd;
     private String courseStatus;
     private String mentorName;
     private String mentorPhone;
@@ -231,9 +231,8 @@ public class CourseDetailActivity extends AppCompatActivity {
     private void editCourse() {
         db = SchedulerDatabase.getInstance(getApplicationContext());
         int assessCount = db.assessmentDao().getAssessmentCount(courseId);
-        int noteCount = db.noteDao().getNoteCount(courseId);
 
-        if (assessCount == 0 && noteCount == 0) {
+        if (assessCount == 0) {
 
             Intent intent = new Intent(CourseDetailActivity.this, AddNewCourseActivity.class);
             intent.putExtra(AddNewTermActivity.TERM_ID, termId);
