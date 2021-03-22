@@ -11,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -40,16 +41,14 @@ import com.example.michaelbettis_term_scheduler.ViewModel.AssessmentViewModel;
 import com.example.michaelbettis_term_scheduler.utils.Helper;
 
 public class AddNewAssessmentActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, View.OnClickListener {
-    public static final String ASSESS_ID = "com.example.michaelbettis_term_scheduler.Activities.ASSESS_ID";
-    public static final String ASSESS_NAME = "com.example.michaelbettis_term_scheduler.Activities.ASSESS_NAME";
-    public static final String ASSESS_DESC = "com.example.michaelbettis_term_scheduler.Activities.ASSESS_DESC";
-    public static final String ASSESS_DUE_DATE = "com.example.michaelbettis_term_scheduler.Activities.ASSESS_DUE_DATE";
-    public static final String ASSESS_TYPE = "com.example.michaelbettis_term_scheduler.Activities.ASSESS_TYPE";
 
+    private int userId;
+    private int termId;
     private int courseId;
+    private int assessId;
+    private Button saveAssessBtn;
     private String courseStart;
     private String courseEnd;
-    private int assessId;
     private EditText etAssessName;
     private EditText etAssessDesc;
     private TextView tvAssessDueDate;
@@ -72,6 +71,7 @@ public class AddNewAssessmentActivity extends AppCompatActivity implements DateP
         tvAssessDueDate = findViewById(R.id.assessment_due_date);
         spinnerType = findViewById(R.id.assessment_type);
         checkBoxDue = findViewById(R.id.due_date_notification);
+        saveAssessBtn = findViewById(R.id.save_assessment);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(AddNewAssessmentActivity.this,
                 android.R.layout.simple_spinner_dropdown_item, getResources().getStringArray(R.array.assessment_type));
@@ -82,21 +82,34 @@ public class AddNewAssessmentActivity extends AppCompatActivity implements DateP
         //Gets intent data and checks if it has an id value or not, if it does, it changes the title
         //text to edit assessment, otherwise it stays as edit assessment
         Intent intent = getIntent();
-        courseId = intent.getIntExtra(AddNewCourseActivity.COURSE_ID, -1);
-        courseStart = intent.getStringExtra(AddNewCourseActivity.COURSE_START);
-        courseEnd = intent.getStringExtra(AddNewCourseActivity.COURSE_END);
-        assessId = getIntent().getIntExtra(ASSESS_ID, -1);
-        if (intent.hasExtra(ASSESS_ID)) {
+        userId = intent.getIntExtra(Helper.USER_ID, -1);
+        termId = getIntent().getIntExtra(Helper.TERM_ID, -1);
+        courseId = intent.getIntExtra(Helper.COURSE_ID, -1);
+        assessId = getIntent().getIntExtra(Helper.ASSESS_ID, -1);
+        courseStart = intent.getStringExtra(Helper.COURSE_START);
+        courseEnd = intent.getStringExtra(Helper.COURSE_END);
+        if (intent.hasExtra(Helper.ASSESS_ID)) {
             getSupportActionBar().setTitle("Edit Assessment");
-            etAssessName.setText(intent.getStringExtra(ASSESS_NAME));
-            etAssessDesc.setText(intent.getStringExtra(ASSESS_DESC));
-            tvAssessDueDate.setText(Helper.sdf(intent.getStringExtra(ASSESS_DUE_DATE)));
+            etAssessName.setText(intent.getStringExtra(Helper.ASSESS_NAME));
+            etAssessDesc.setText(intent.getStringExtra(Helper.ASSESS_DESC));
+            tvAssessDueDate.setText(Helper.sdf(intent.getStringExtra(Helper.ASSESS_DUE_DATE)));
 
             //gets and sets spinner value
-            int selectionPosition = adapter.getPosition(intent.getStringExtra(ASSESS_TYPE));
+            int selectionPosition = adapter.getPosition(intent.getStringExtra(Helper.ASSESS_TYPE));
             spinnerType.setSelection(selectionPosition);
 
         }
+
+        saveAssessBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    saveAssess();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         //sets the onClickListener for the date textViews
         tvAssessDueDate.setOnClickListener(this);
@@ -104,28 +117,6 @@ public class AddNewAssessmentActivity extends AppCompatActivity implements DateP
         //creates or provides a view model instance
         assessViewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(AssessmentViewModel.class);
 
-    }
-
-    //sets the menu for the activity
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.add_assessment_menu, menu);
-        return true;
-    }
-
-    //sets the methods for the menu buttons
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.save_assessment) {
-            try {
-                saveAssess();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     //sets the text view text to the selected date
@@ -145,8 +136,6 @@ public class AddNewAssessmentActivity extends AppCompatActivity implements DateP
     public void onClick(View view) {
         Bundle currentDate = new Bundle();
         try {
-            System.out.println(Helper.stringToLong(courseEnd));
-            System.out.println(Helper.stringToLong(courseStart));
             currentDate.putLong("setEndDate", Helper.stringToLong(courseEnd));
             currentDate.putLong("setStartDate", Helper.stringToLong(courseStart));
         } catch (ParseException e) {
@@ -165,42 +154,31 @@ public class AddNewAssessmentActivity extends AppCompatActivity implements DateP
         String description = etAssessDesc.getText().toString();
         String dueDate = tvAssessDueDate.getText().toString();
         String type = spinnerType.getSelectedItem().toString();
+        AssessmentEntity assess;
 
         //check to see if all fields have a value and are not blank spaces
         if (name.trim().isEmpty() || description.trim().isEmpty() || dueDate.trim().isEmpty()) {
             Toast.makeText(this, "Please enter a value in all fields", Toast.LENGTH_SHORT).show();
             return;
-        } else {
-            AssessmentEntity assess;
-            if (assessId == -1) {
-                assess = new AssessmentEntity(name, Helper.stringToDate(dueDate), description, type, courseId);
-                assessViewModel.insert(assess);
-                Toast.makeText(this, "Assessment Added", Toast.LENGTH_SHORT).show();
-            } else {
-                assess = new AssessmentEntity(name, Helper.stringToDate(dueDate), description, type, courseId);
-                assess.setAssessment_id(assessId);
-                assessViewModel.update(assess);
-                Toast.makeText(this, "Assessment updated", Toast.LENGTH_SHORT).show();
+        }
 
-            }
+        if (assessId == -1) {
+            assess = new AssessmentEntity(name, Helper.stringToDate(dueDate), description, type, courseId);
+            assessViewModel.insert(assess);
+            Toast.makeText(this, "Assessment Added", Toast.LENGTH_SHORT).show();
+        } else {
+            assess = new AssessmentEntity(name, Helper.stringToDate(dueDate), description, type, courseId);
+            assess.setAssessment_id(assessId);
+            assessViewModel.update(assess);
+            Toast.makeText(this, "Assessment updated", Toast.LENGTH_SHORT).show();
+
         }
 
         if (checkBoxDue.isChecked()) {
-            Intent intent = new Intent(AddNewAssessmentActivity.this, MyReceiver.class);
-            intent.putExtra("Notification", "This is a reminder that Assessment, " + name + ", is due today!");
-            PendingIntent sender = PendingIntent.getBroadcast(AddNewAssessmentActivity.this, 2, intent, 0);
-            AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-            alarmManager.set(AlarmManager.RTC_WAKEUP, Helper.stringToDate(dueDate).getTime(), sender);
+            Helper.sendNotification(dueDate, "This is a reminder that your Assessment, " + name + " is due today!", 2, AddNewAssessmentActivity.this);
         }
 
-        Intent intent = new Intent(AddNewAssessmentActivity.this, AssessmentListActivity.class);
-        intent.putExtra(AddNewAssessmentActivity.ASSESS_NAME, name);
-        intent.putExtra(AddNewAssessmentActivity.ASSESS_DESC, description);
-        intent.putExtra(AddNewAssessmentActivity.ASSESS_DUE_DATE, dueDate);
-        intent.putExtra(AddNewAssessmentActivity.ASSESS_ID, assessId);
-        intent.putExtra(AddNewAssessmentActivity.ASSESS_TYPE, type);
-        intent.putExtra(AddNewCourseActivity.COURSE_ID, courseId);
-        startActivity(intent);
+        Helper.goToAssessments(userId, termId, courseId, courseStart, courseEnd, AddNewAssessmentActivity.this);
 
     }
 

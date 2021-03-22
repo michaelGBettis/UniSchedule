@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_terms"
+            android:title="Terms" />
+        <item
+            android:id="@+id/nav_courses"
+            android:title="Courses" />
+        <item
+            android:id="@+id/nav_assessments"
+            android:title="Assessments" />
+        <item
+            android:id="@+id/nav_notes"
+            android:title="Notes" />
+
+    </group>
+
+
+    <item android:title="Profile">
+
+        <menu>
+
+            <group android:checkableBehavior="single">
+
+                <item
+                    android:id="@+id/nav_account_info"
+                    android:title="Account Information" />
+                <item
+                    android:id="@+id/nav_reports"
+                    android:title="Reports" />
+                <item
+                    android:id="@+id/nav_sign_out"
+                    android:title="Sign Out" />
+
+            </group>
+
+        </menu>
+
+    </item>
+
+
+
+
+        <item android:title="Support">
+
+            <menu>
+
+                <group>
+
+                <item
+                    android:id="@+id/nav_help"
+                    android:title="Help" />
+                <item
+                    android:id="@+id/nav_feedback"
+                    android:title="Feedback" />
+
+                </group>
+
+            </menu>
+
+        </item>
+
+
+
+</menu>

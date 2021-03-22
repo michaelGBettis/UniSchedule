@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -18,17 +20,18 @@ import com.example.michaelbettis_term_scheduler.R;
 
 import com.example.michaelbettis_term_scheduler.Entities.NoteEntity;
 import com.example.michaelbettis_term_scheduler.ViewModel.NoteViewModel;
+import com.example.michaelbettis_term_scheduler.utils.Helper;
 
 import java.util.Objects;
 
 public class AddNewNoteActivity extends AppCompatActivity {
-    public static final String NOTE_ID = "com.example.michaelbettis_term_scheduler.Activities.NOTE_ID";
-    public static final String NOTE_NAME = "com.example.michaelbettis_term_scheduler.Activities.NOTE_NAME";
-    public static final String NOTE_DESCRIPTION = "com.example.michaelbettis_term_scheduler.Activities.NOTE_DESCRIPTION";
 
 
+    private int userId;
+    private int termId;
     private int courseId;
     private int noteId;
+    private Button saveNoteBtn;
     private EditText editTextNoteName;
     private EditText editTextNoteDescription;
     private NoteViewModel noteViewModel;
@@ -45,70 +48,59 @@ public class AddNewNoteActivity extends AppCompatActivity {
         //sets the values of the input data to variables
         editTextNoteName = findViewById(R.id.note_name);
         editTextNoteDescription = findViewById(R.id.note_description);
+        saveNoteBtn = findViewById(R.id.save_note);
 
         //Gets intent data and checks if it has an id value or not, if it does, it changes the title
         //text to edit note, otherwise it stays as edit note
         Intent intent = getIntent();
-        courseId = intent.getIntExtra(AddNewCourseActivity.COURSE_ID, -1);
-        noteId = getIntent().getIntExtra(NOTE_ID, -1);
-        if (intent.hasExtra(NOTE_ID)) {
+        userId = intent.getIntExtra(Helper.USER_ID, -1);
+        termId = getIntent().getIntExtra(Helper.TERM_ID, -1);
+        courseId = intent.getIntExtra(Helper.COURSE_ID, -1);
+        noteId = getIntent().getIntExtra(Helper.NOTE_ID, -1);
+        if (intent.hasExtra(Helper.NOTE_ID)) {
             getSupportActionBar().setTitle("Edit Note");
-            editTextNoteName.setText(intent.getStringExtra(NOTE_NAME));
-            editTextNoteDescription.setText(intent.getStringExtra(NOTE_DESCRIPTION));
+            editTextNoteName.setText(intent.getStringExtra(Helper.NOTE_NAME));
+            editTextNoteDescription.setText(intent.getStringExtra(Helper.NOTE_DESCRIPTION));
 
         }
 
         //creates or provides a view model instance
         noteViewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(NoteViewModel.class);
-    }
 
-    //sets the menu for the activity
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.add_course_menu, menu);
-        return true;
-    }
-
-    //sets the methods for the menu buttons
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.save_course) {
-            saveCourse();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        saveNoteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveNote();
+            }
+        });
     }
 
     //method for the save button
-    private void saveCourse() {
+    private void saveNote() {
         String name = editTextNoteName.getText().toString();
         String description = editTextNoteDescription.getText().toString();
+        NoteEntity note;
 
         //check to see if all fields have a value and are not blank spaces
         if (name.trim().isEmpty() || description.trim().isEmpty()) {
             Toast.makeText(this, "Please enter a value in all fields", Toast.LENGTH_SHORT).show();
             return;
-        } else {
-            NoteEntity note;
-            if (noteId == -1) {
-                note = new NoteEntity(name, description, courseId);
-                noteViewModel.insert(note);
-                Toast.makeText(this, "Note Added", Toast.LENGTH_SHORT).show();
-            } else {
-                note = new NoteEntity(name, description, courseId);
-                note.setNote_id(noteId);
-                noteViewModel.update(note);
-                Toast.makeText(this, "Note updated", Toast.LENGTH_SHORT).show();
-
-            }
         }
-        Intent intent = new Intent(AddNewNoteActivity.this, NoteListActivity.class);
-        intent.putExtra(AddNewNoteActivity.NOTE_NAME, name);
-        intent.putExtra(AddNewNoteActivity.NOTE_DESCRIPTION, description);
-        intent.putExtra(AddNewNoteActivity.NOTE_ID, noteId);
-        intent.putExtra(AddNewCourseActivity.COURSE_ID, courseId);
-        startActivity(intent);
+
+        if (noteId == -1) {
+            note = new NoteEntity(name, description, courseId);
+            noteViewModel.insert(note);
+            Toast.makeText(this, "Note Added", Toast.LENGTH_SHORT).show();
+
+        } else {
+            note = new NoteEntity(name, description, courseId);
+            note.setNote_id(noteId);
+            noteViewModel.update(note);
+            Toast.makeText(this, "Note updated", Toast.LENGTH_SHORT).show();
+
+        }
+
+        Helper.goToNotes(termId, userId, courseId, AddNewNoteActivity.this);
 
     }
 

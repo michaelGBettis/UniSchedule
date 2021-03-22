@@ -84,11 +84,6 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:parentActivityName=".Activities.TermActivities.TermListActivity" />
         <activity
-            android:name=".Activities.TermActivities.TermDetailActivity"
-            android:label="@string/title_activity_term_detail"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:parentActivityName=".Activities.TermActivities.TermListActivity" />
-        <activity
             android:name=".Activities.TermActivities.TermListActivity"
             android:label="@string/title_activity_term_list"
             android:launchMode="singleTop"

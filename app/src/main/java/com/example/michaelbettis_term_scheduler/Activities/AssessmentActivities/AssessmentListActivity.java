@@ -1,6 +1,7 @@
 package com.example.michaelbettis_term_scheduler.Activities.AssessmentActivities;
 
 import android.content.Intent;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -12,8 +13,12 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -21,8 +26,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.michaelbettis_term_scheduler.Activities.CourseActivities.AddNewCourseActivity;
+import com.example.michaelbettis_term_scheduler.Activities.CourseActivities.CourseListActivity;
 import com.example.michaelbettis_term_scheduler.Activities.MainActivity;
 import com.example.michaelbettis_term_scheduler.R;
+import com.example.michaelbettis_term_scheduler.utils.Helper;
 import com.example.michaelbettis_term_scheduler.utils.SchedulerDatabase;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -33,38 +40,68 @@ import java.util.Objects;
 import com.example.michaelbettis_term_scheduler.Adapters.AssessmentAdapter;
 import com.example.michaelbettis_term_scheduler.Entities.AssessmentEntity;
 import com.example.michaelbettis_term_scheduler.ViewModel.AssessmentViewModel;
+import com.google.android.material.navigation.NavigationView;
+
+import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 
 
-public class AssessmentListActivity extends AppCompatActivity {
+public class AssessmentListActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+    private int userId;
+    private int termId;
+    private int courseId;
+    private int assessmentCount;
+    private String courseEnd;
+    private String courseStart;
+    private DrawerLayout drawer;
+    private NavigationView navigationView;
+    private Toolbar toolbar;
+    private AssessmentAdapter adapter;
     private AssessmentViewModel assessViewModel;
     SchedulerDatabase db;
-    private AssessmentAdapter adapter;
-    private int courseId;
-    private String courseStart;
-    private String courseEnd;
-    private int assessmentCount;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_assessment_list);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        Objects.requireNonNull(getSupportActionBar()).setTitle("Assessment List");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        db = SchedulerDatabase.getInstance(getApplicationContext());
 
-        //sets the recycle view
+        //======================================Hooks=============================================//
+
+        drawer = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+        toolbar = findViewById(R.id.toolbar);
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setHasFixedSize(true);
+
+        //======================================Tool Bar==========================================//
+
+        setSupportActionBar(toolbar);
+
+        //==============================Navigation Drawer Menu====================================//
+
+        //Toggles the navigation drawer
+        navigationView.bringToFront();
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setCheckedItem(R.id.nav_assessments);
+
+        //===============================Setting Intent Values====================================//
 
         //assigning intent values
         Intent intent = getIntent();
-        courseId = intent.getIntExtra(AddNewCourseActivity.COURSE_ID, -1);
-        courseStart = intent.getStringExtra(AddNewCourseActivity.COURSE_START);
-        courseEnd = intent.getStringExtra(AddNewCourseActivity.COURSE_END);
-        db = SchedulerDatabase.getInstance(getApplicationContext());
+        userId = intent.getIntExtra(Helper.USER_ID, -1);
+        termId = intent.getIntExtra(Helper.TERM_ID, -1);
+        courseId = intent.getIntExtra(Helper.COURSE_ID, -1);
+        courseStart = intent.getStringExtra(Helper.COURSE_START);
+        courseEnd = intent.getStringExtra(Helper.COURSE_END);
+
+        //==================================Recycler View=========================================//
+
+        //sets the recycle view
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
 
         //connects the recycler view and the adapter which updates the recycler view any time a change
         //happens in the adapter
@@ -94,24 +131,48 @@ public class AssessmentListActivity extends AppCompatActivity {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                assessViewModel.delete(adapter.getAssessmentAt(viewHolder.getAdapterPosition()));
-                Toast.makeText(AssessmentListActivity.this, "Assessment Deleted", Toast.LENGTH_SHORT).show();
+
+                int position = viewHolder.getAdapterPosition();
+                AssessmentEntity assessment = adapter.getAssessmentAt(position);
+
+                switch (direction){
+                    case ItemTouchHelper.LEFT:
+                        Helper.editAssessment(AssessmentListActivity.this, assessment, courseStart, courseEnd);
+                        adapter.notifyDataSetChanged();
+                        break;
+                    case ItemTouchHelper.RIGHT:
+                        Helper.deleteAssessment(AssessmentListActivity.this, assessViewModel, assessment);
+                        adapter.notifyItemRemoved(position);
+                }
 
             }
+
+            @Override
+            public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+
+                new RecyclerViewSwipeDecorator.Builder(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+                        .addSwipeLeftBackgroundColor(ContextCompat.getColor(AssessmentListActivity.this, R.color.colorSecondary))
+                        .addSwipeLeftActionIcon(R.drawable.ic_edit)
+                        .addSwipeRightBackgroundColor(ContextCompat.getColor(AssessmentListActivity.this, R.color.colorAccentSecond))
+                        .addSwipeRightActionIcon(R.drawable.ic_delete)
+                        .create()
+                        .decorate();
+
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+
         }).attachToRecyclerView(recyclerView);
 
         adapter.setOnItemClickListener(new AssessmentAdapter.onItemClickListener() {
             @Override
             public void onItemClick(AssessmentEntity assessment) {
                 Intent intent = new Intent(AssessmentListActivity.this, AssessmentDetailActivity.class);
-                intent.putExtra(AddNewAssessmentActivity.ASSESS_NAME, assessment.getAssessment_name());
-                intent.putExtra(AddNewAssessmentActivity.ASSESS_DESC, assessment.getAssessment_info());
-                intent.putExtra(AddNewAssessmentActivity.ASSESS_DUE_DATE, assessment.getDue_date().toString());
-                intent.putExtra(AddNewAssessmentActivity.ASSESS_ID, assessment.getAssessment_id());
-                intent.putExtra(AddNewAssessmentActivity.ASSESS_TYPE, assessment.getAssessment_type());
-                intent.putExtra(AddNewCourseActivity.COURSE_ID, courseId);
-                intent.putExtra(AddNewCourseActivity.COURSE_START, courseStart);
-                intent.putExtra(AddNewCourseActivity.COURSE_END, courseEnd);
+                intent.putExtra(Helper.USER_ID, userId);
+                intent.putExtra(Helper.TERM_END, termId);
+                intent.putExtra(Helper.COURSE_ID, courseId);
+                intent.putExtra(Helper.ASSESS_ID, assessment.getAssessment_id());
+                intent.putExtra(Helper.COURSE_START, courseStart);
+                intent.putExtra(Helper.COURSE_END, courseEnd);
                 startActivity(intent);
             }
         });
@@ -123,9 +184,9 @@ public class AssessmentListActivity extends AppCompatActivity {
                 assessmentCount = db.assessmentDao().getAssessmentCount(courseId);
                 if (assessmentCount <= 4) {
                     Intent intent = new Intent(AssessmentListActivity.this, AddNewAssessmentActivity.class);
-                    intent.putExtra(AddNewCourseActivity.COURSE_ID, courseId);
-                    intent.putExtra(AddNewCourseActivity.COURSE_START, courseStart);
-                    intent.putExtra(AddNewCourseActivity.COURSE_END, courseEnd);
+                    intent.putExtra(Helper.COURSE_ID, courseId);
+                    intent.putExtra(Helper.COURSE_START, courseStart);
+                    intent.putExtra(Helper.COURSE_END, courseEnd);
                     startActivity(intent);
                 } else
                     Toast.makeText(AssessmentListActivity.this, "Error: The max number of Assessments per Course is 5", Toast.LENGTH_SHORT).show();
@@ -137,9 +198,9 @@ public class AssessmentListActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.assessment_list_menu, menu);
+        menuInflater.inflate(R.menu.search_bar_manu, menu);
 
-        MenuItem searchItem = menu.findItem(R.id.search_assessments);
+        MenuItem searchItem = menu.findItem(R.id.search_items);
         SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
@@ -159,46 +220,45 @@ public class AssessmentListActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
         switch (item.getItemId()) {
-            case R.id.delete_all_assessments:
-                deleteAllAssessments();
-                return true;
-            case R.id.sign_out:
-                signOut();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+            case R.id.nav_terms:
+                Helper.goToTerms(userId, AssessmentListActivity.this);
+                break;
+            case R.id.nav_courses:
+                Helper.goToCourses(userId, termId, AssessmentListActivity.this);
+                break;
+            case R.id.nav_notes:
+                Helper.goToNotes(termId, userId, courseId, AssessmentListActivity.this);
+                break;
+            case R.id.nav_account_info:
+                Helper.editUser(db, userId, AssessmentListActivity.this);
+                break;
+            case R.id.nav_reports:
+                Helper.generateReports(db, userId, AssessmentListActivity.this);
+                break;
+            case R.id.nav_sign_out:
+                Helper.signOut(AssessmentListActivity.this);
+                break;
+            case R.id.nav_help:
+                Toast.makeText(AssessmentListActivity.this, "Help", Toast.LENGTH_SHORT).show();
+                break;
+            case R.id.nav_feedback:
+                Toast.makeText(AssessmentListActivity.this, "Feedback", Toast.LENGTH_SHORT).show();
+                break;
         }
-    }
 
-    private void signOut() {
-        Intent intent = new Intent(AssessmentListActivity.this, MainActivity.class);
-        startActivity(intent);
-        finish();
-        Toast.makeText(this, "Sign out successful!", Toast.LENGTH_SHORT).show();
-    }
-
-    private void deleteAllAssessments() {
-
-        assessViewModel.getAllAssessments().observe(this, new Observer<List<AssessmentEntity>>() {
-            @Override
-            public void onChanged(List<AssessmentEntity> assessments) {
-                for (AssessmentEntity a : assessments) {
-                    if (a.getCourse_id() == courseId) {
-
-                        assessViewModel.delete(a);
-                        Toast.makeText(AssessmentListActivity.this, "Assessments Deleted", Toast.LENGTH_SHORT).show();
-
-                    }
-                }
-            }
-        });
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
     @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
+    public void onBackPressed() {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+            return;
+        }
+        super.onBackPressed();
     }
 }

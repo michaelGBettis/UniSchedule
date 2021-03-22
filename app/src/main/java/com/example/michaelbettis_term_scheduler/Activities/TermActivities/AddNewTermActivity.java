@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -32,11 +33,7 @@ import com.example.michaelbettis_term_scheduler.Entities.TermEntity;
 import com.example.michaelbettis_term_scheduler.utils.SchedulerDatabase;
 import com.example.michaelbettis_term_scheduler.ViewModel.TermViewModel;
 
-public class AddNewTermActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, View.OnClickListener {
-    public static final String TERM_ID = "com.example.michaelbettis_term_scheduler.Activities.TERM_ID";
-    public static final String TERM_NAME = "com.example.michaelbettis_term_scheduler.Activities.TERM_NAME";
-    public static final String TERM_START = "com.example.michaelbettis_term_scheduler.Activities.TERM_START";
-    public static final String TERM_END = "com.example.michaelbettis_term_scheduler.Activities.TERM_END";
+public class AddNewTermActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener {
 
     private int termId;
     private int userId;
@@ -45,7 +42,9 @@ public class AddNewTermActivity extends AppCompatActivity implements DatePickerD
     private TextView textViewTermStart;
     private TextView textViewTermEnd;
     private TermViewModel termViewModel;
-    long lastTermEndDate = System.currentTimeMillis();
+    private Button saveTermBtn;
+    private long lastTermEndDate = System.currentTimeMillis();
+
 
 
     @Override
@@ -61,20 +60,21 @@ public class AddNewTermActivity extends AppCompatActivity implements DatePickerD
         editTextTermName = findViewById(R.id.term_name);
         textViewTermStart = findViewById(R.id.term_start);
         textViewTermEnd = findViewById(R.id.term_end);
+        saveTermBtn = findViewById(R.id.save_term);
 
         //Gets intent data and checks if it has an id value or not, if it does, it changes the title
         //text to edit term, otherwise it stays as edit term
         Intent intent = getIntent();
-        userId = getIntent().getIntExtra(MainActivity.USER_ID, -1);
-        termId = getIntent().getIntExtra(TERM_ID, -1);
+        userId = getIntent().getIntExtra(Helper.USER_ID, -1);
+        termId = getIntent().getIntExtra(Helper.TERM_ID, -1);
 
-        if (intent.hasExtra(TERM_ID)) {
+        if (intent.hasExtra(Helper.TERM_ID)) {
             getSupportActionBar().setTitle("Edit Term");
             SchedulerDatabase db = SchedulerDatabase.getInstance(getApplicationContext());
             lastTermEndDate = db.termDao().getLastEndDate(userId);
-            editTextTermName.setText(intent.getStringExtra(TERM_NAME));
-            textViewTermStart.setText(Helper.sdf(intent.getStringExtra(TERM_START)));
-            textViewTermEnd.setText(Helper.sdf(intent.getStringExtra(TERM_END)));
+            editTextTermName.setText(intent.getStringExtra(Helper.TERM_NAME));
+            textViewTermStart.setText(Helper.sdf(intent.getStringExtra(Helper.TERM_START)));
+            textViewTermEnd.setText(Helper.sdf(intent.getStringExtra(Helper.TERM_END)));
             try {
                 lastTermEndDate = Helper.shortStringToLong(textViewTermStart.getText().toString());
             } catch (ParseException e) {
@@ -83,35 +83,44 @@ public class AddNewTermActivity extends AppCompatActivity implements DatePickerD
         }
 
         //sets the onClickListener for the date textViews
-        textViewTermStart.setOnClickListener(this);
-        textViewTermEnd.setOnClickListener(this);
+        textViewTermStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                setTermDateRange(view, lastTermEndDate + Helper.DAY_IN_MILLIS, -1);
+
+            }
+        });
+        textViewTermEnd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    setTermDateRange(view,
+                            Helper.shortStringToLong(textViewTermStart.getText().toString()) + (Helper.DAY_IN_MILLIS)
+                            , Helper.shortStringToLong(textViewTermStart.getText().toString()) + (90 * Helper.DAY_IN_MILLIS));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
+        saveTermBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveTerm();
+            }
+        });
 
         //creates or provides a view model instance
         termViewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(TermViewModel.class);
 
     }
 
-    //sets the menu for the activity
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.add_term_menu, menu);
-        return true;
-    }
-
-    //sets the methods for the menu buttons
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.save_term) {
-            saveTerm();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     //method for the save button
+
     private void saveTerm() {
-        termId = getIntent().getIntExtra(TERM_ID, -1);
+        termId = getIntent().getIntExtra(Helper.TERM_ID, -1);
         String name = editTextTermName.getText().toString();
         String startDate = textViewTermStart.getText().toString();
         String endDate = textViewTermEnd.getText().toString();
@@ -146,27 +155,38 @@ public class AddNewTermActivity extends AppCompatActivity implements DatePickerD
             }
 
             Intent intent = new Intent(AddNewTermActivity.this, TermListActivity.class);
-            intent.putExtra(AddNewTermActivity.TERM_ID, termId);
-            intent.putExtra(MainActivity.USER_ID, userId);
-            intent.putExtra(AddNewTermActivity.TERM_NAME, name);
-            intent.putExtra(AddNewTermActivity.TERM_START, startDate);
-            intent.putExtra(AddNewTermActivity.TERM_END, endDate);
+            intent.putExtra(Helper.TERM_ID, termId);
+            intent.putExtra(Helper.USER_ID, userId);
+            intent.putExtra(Helper.TERM_NAME, name);
+            intent.putExtra(Helper.TERM_START, startDate);
+            intent.putExtra(Helper.TERM_END, endDate);
             startActivity(intent);
         }
 
     }
-
     //sets the text view text to the selected date
+
     @Override
     public void onDateSet(DatePicker datePicker, int year, int month, int day) {
         Calendar c = Calendar.getInstance();
         c.set(Calendar.YEAR, year);
         c.set(Calendar.MONTH, month);
         c.set(Calendar.DAY_OF_MONTH, day);
-        String currentDateString = DateFormat.getDateInstance(DateFormat.MEDIUM).format(c.getTime());
+        String selectedDate = DateFormat.getDateInstance(DateFormat.MEDIUM).format(c.getTime());
         TextView textView = findViewById(viewId);
-        textView.setText(currentDateString);
+        textView.setText(selectedDate);
 
+    }
+
+    private void setTermDateRange(View view, long startOfDateRange, long endOfDateRange) {
+        Bundle currentDate = new Bundle();
+        DialogFragment datePicker = new DatePickerFragment();
+
+        currentDate.putLong("setStartDate", startOfDateRange);
+        currentDate.putLong("setEndDate", endOfDateRange);
+        datePicker.setArguments(currentDate);
+        datePicker.show(getSupportFragmentManager(), "Date Picker");
+        viewId = view.getId();
     }
 
     //sets the action for the back button and displays a message
@@ -175,35 +195,5 @@ public class AddNewTermActivity extends AppCompatActivity implements DatePickerD
         onBackPressed();
         Toast.makeText(this, "Term not Added", Toast.LENGTH_SHORT).show();
         return true;
-    }
-
-    //creates a pop-up date picker when the date text views are clicked
-    @Override
-    public void onClick(View view) {
-        Bundle currentDate = new Bundle();
-        DialogFragment datePicker = new DatePickerFragment();
-
-
-        switch (view.getId()) {
-            case R.id.term_start:
-                currentDate.putLong("setEndDate", -1);
-                currentDate.putLong("setStartDate", lastTermEndDate + (24 * 60 * 60 * 1000L));
-                datePicker.setArguments(currentDate);
-                datePicker.show(getSupportFragmentManager(), "Date Picker");
-                viewId = view.getId();
-                break;
-            case R.id.term_end:
-                try {
-                    currentDate.putLong("setEndDate", Helper.shortStringToLong(textViewTermStart.getText().toString()) + (90 * 24 * 60 * 60 * 1000L));
-                    currentDate.putLong("setStartDate", Helper.shortStringToLong(textViewTermStart.getText().toString()) + (24 * 60 * 60 * 1000L));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                datePicker.setArguments(currentDate);
-                datePicker.show(getSupportFragmentManager(), "Date Picker");
-                viewId = view.getId();
-                break;
-        }
-
     }
 }

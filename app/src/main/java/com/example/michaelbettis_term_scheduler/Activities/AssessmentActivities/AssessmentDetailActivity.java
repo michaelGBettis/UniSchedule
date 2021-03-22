@@ -31,14 +31,12 @@ import java.util.Objects;
 
 public class AssessmentDetailActivity extends AppCompatActivity {
 
+    private int userId;
+    private int termId;
     private int courseId;
     private int assessId;
     private String courseStart;
     private String courseEnd;
-    private String name;
-    private String description;
-    private String dueDate;
-    private String type;
     private AssessmentViewModel assessViewModel;
     SchedulerDatabase db;
     AssessmentEntity currentAssess;
@@ -62,31 +60,19 @@ public class AssessmentDetailActivity extends AppCompatActivity {
 
         //assigning intent values
         Intent intent = getIntent();
-        name = intent.getStringExtra(AddNewAssessmentActivity.ASSESS_NAME);
-        description = intent.getStringExtra(AddNewAssessmentActivity.ASSESS_DESC);
-        dueDate = intent.getStringExtra(AddNewAssessmentActivity.ASSESS_DUE_DATE);
-        type = intent.getStringExtra(AddNewAssessmentActivity.ASSESS_TYPE);
-        assessId = intent.getIntExtra(AddNewAssessmentActivity.ASSESS_ID, -1);
-        courseId = intent.getIntExtra(AddNewCourseActivity.COURSE_ID, -1);
-        courseStart = intent.getStringExtra(AddNewCourseActivity.COURSE_START);
-        courseEnd = intent.getStringExtra(AddNewCourseActivity.COURSE_END);
+        userId = intent.getIntExtra(Helper.USER_ID, -1);
+        termId = intent.getIntExtra(Helper.TERM_END, -1);
+        courseId = intent.getIntExtra(Helper.COURSE_ID, -1);
+        assessId = intent.getIntExtra(Helper.ASSESS_ID, -1);
+        courseStart = intent.getStringExtra(Helper.COURSE_START);
+        courseEnd = intent.getStringExtra(Helper.COURSE_END);
         db = SchedulerDatabase.getInstance(getApplicationContext());
         currentAssess = db.assessmentDao().getCurrentAssessments(courseId, assessId);
 
         //setting view text
-        tvAssessName.setText(name);
-        tvAssessDesc.setText(description);
-        tvAssessDueDate.setText(Helper.sdf(dueDate));
-
-        Button noteButton = findViewById(R.id.all_notes);
-        noteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(AssessmentDetailActivity.this, NoteListActivity.class);
-                intent.putExtra(AddNewCourseActivity.COURSE_ID, courseId);
-                startActivity(intent);
-            }
-        });
+        tvAssessName.setText(currentAssess.getAssessment_name());
+        tvAssessDesc.setText(currentAssess.getAssessment_info());
+        tvAssessDueDate.setText(Helper.sdf(currentAssess.getDue_date().toString()));
     }
 
     @Override
@@ -97,59 +83,17 @@ public class AssessmentDetailActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.delete_assessment:
-                deleteAssessment();
+                Helper.deleteAssessment(AssessmentDetailActivity.this, assessViewModel, currentAssess);
+                Helper.goToAssessments(userId, termId, courseId, courseStart, courseEnd, this);
                 return true;
             case R.id.edit_assessment:
-                editAssessment();
-                return true;
-            case R.id.sign_out:
-                signOut();
+                Helper.editAssessment(AssessmentDetailActivity.this, currentAssess, courseStart, courseEnd);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private void signOut() {
-        Intent intent = new Intent(AssessmentDetailActivity.this, MainActivity.class);
-        startActivity(intent);
-        finish();
-        Toast.makeText(this, "Sign out successful!", Toast.LENGTH_SHORT).show();
-    }
-
-    private void deleteAssessment() {
-        assessViewModel.delete(currentAssess);
-        Toast.makeText(this, "Assessment deleted", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(AssessmentDetailActivity.this, AssessmentListActivity.class);
-        intent.putExtra(AddNewAssessmentActivity.ASSESS_ID, assessId);
-        intent.putExtra(AddNewAssessmentActivity.ASSESS_NAME, name);
-        intent.putExtra(AddNewAssessmentActivity.ASSESS_DESC, description);
-        intent.putExtra(AddNewAssessmentActivity.ASSESS_DUE_DATE, dueDate);
-        intent.putExtra(AddNewAssessmentActivity.ASSESS_TYPE, type);
-        intent.putExtra(AddNewCourseActivity.COURSE_ID, courseId);
-        startActivity(intent);
-
-    }
-
-    private void editAssessment() {
-        Intent intent = new Intent(AssessmentDetailActivity.this, AddNewAssessmentActivity.class);
-        intent.putExtra(AddNewAssessmentActivity.ASSESS_ID, assessId);
-        intent.putExtra(AddNewAssessmentActivity.ASSESS_NAME, name);
-        intent.putExtra(AddNewAssessmentActivity.ASSESS_DESC, description);
-        intent.putExtra(AddNewAssessmentActivity.ASSESS_DUE_DATE, dueDate);
-        intent.putExtra(AddNewAssessmentActivity.ASSESS_TYPE, type);
-        intent.putExtra(AddNewCourseActivity.COURSE_ID, courseId);
-        intent.putExtra(AddNewCourseActivity.COURSE_START, courseStart);
-        intent.putExtra(AddNewCourseActivity.COURSE_END, courseEnd);
-        startActivity(intent);
     }
 }

@@ -7,20 +7,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.example.michaelbettis_term_scheduler.Activities.TermActivities.AddNewTermActivity;
 import com.example.michaelbettis_term_scheduler.utils.DatePickerFragment;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -41,21 +37,15 @@ import com.example.michaelbettis_term_scheduler.ViewModel.CourseViewModel;
 import com.example.michaelbettis_term_scheduler.utils.Helper;
 
 public class AddNewCourseActivity extends AppCompatActivity implements DatePickerDialog.OnDateSetListener, View.OnClickListener {
-    public static final String COURSE_ID = "com.example.michaelbettis_term_scheduler.Activities.COURSE_ID";
-    public static final String COURSE_NAME = "com.example.michaelbettis_term_scheduler.Activities.COURSE_NAME";
-    public static final String COURSE_START = "com.example.michaelbettis_term_scheduler.Activities.COURSE_START";
-    public static final String COURSE_END = "com.example.michaelbettis_term_scheduler.Activities.COURSE_END";
-    public static final String COURSE_STATUS = "com.example.michaelbettis_term_scheduler.Activities.COURSE_STATUS";
-    public static final String MENTOR_NAME = "com.example.michaelbettis_term_scheduler.Activities.MENTOR_NAME";
-    public static final String MENTOR_PHONE = "com.example.michaelbettis_term_scheduler.Activities.MENTOR_PHONE";
-    public static final String MENTOR_EMAIL = "com.example.michaelbettis_term_scheduler.Activities.MENTOR_EMAIL";
 
-    private int courseId;
+    private int userId;
     private int termId;
+    private int courseId;
+    private int viewId;
     private String termStart;
     private String termEnd;
-    private int viewId;
     private String courseStatus;
+    private Button saveCourseBtn;
     private EditText editTextCourseName;
     private TextView textViewCourseStart;
     private TextView textViewCourseEnd;
@@ -87,6 +77,7 @@ public class AddNewCourseActivity extends AppCompatActivity implements DatePicke
         checkBoxStart = findViewById(R.id.start_notification);
         checkBoxEnd = findViewById(R.id.end_notification);
         spinnerCourseStatus = findViewById(R.id.course_status);
+        saveCourseBtn = findViewById(R.id.save_course);
 
         //sets the values for the spinner
         ArrayAdapter<String> adapter = new ArrayAdapter<>(AddNewCourseActivity.this,
@@ -98,25 +89,37 @@ public class AddNewCourseActivity extends AppCompatActivity implements DatePicke
         //Gets intent data and checks if it has an id value or not, if it does, it changes the title
         //text to edit course, otherwise it stays as edit course
         Intent intent = getIntent();
-        termId = intent.getIntExtra(AddNewTermActivity.TERM_ID, -1);
-        termStart = intent.getStringExtra(AddNewTermActivity.TERM_START);
-        termEnd = intent.getStringExtra(AddNewTermActivity.TERM_END);
-        courseId = getIntent().getIntExtra(COURSE_ID, -1);
-        if (intent.hasExtra(COURSE_ID)) {
+        userId = intent.getIntExtra(Helper.USER_ID, -1);
+        termId = intent.getIntExtra(Helper.TERM_ID, -1);
+        termStart = intent.getStringExtra(Helper.TERM_START);
+        termEnd = intent.getStringExtra(Helper.TERM_END);
+        courseId = getIntent().getIntExtra(Helper.COURSE_ID, -1);
+        if (intent.hasExtra(Helper.COURSE_ID)) {
             getSupportActionBar().setTitle("Edit Course");
-            courseStatus = intent.getStringExtra(AddNewCourseActivity.COURSE_STATUS);
-            editTextCourseName.setText(intent.getStringExtra(COURSE_NAME));
-            textViewCourseStart.setText(Helper.sdf(intent.getStringExtra(COURSE_START)));
-            textViewCourseEnd.setText(Helper.sdf(intent.getStringExtra(COURSE_END)));
-            editTextMentorName.setText(intent.getStringExtra(MENTOR_NAME));
-            editTextMentorPhone.setText(intent.getStringExtra(MENTOR_PHONE));
-            editTextMentorEmail.setText(intent.getStringExtra(MENTOR_EMAIL));
+            courseStatus = intent.getStringExtra(Helper.COURSE_STATUS);
+            editTextCourseName.setText(intent.getStringExtra(Helper.COURSE_NAME));
+            textViewCourseStart.setText(Helper.sdf(intent.getStringExtra(Helper.COURSE_START)));
+            textViewCourseEnd.setText(Helper.sdf(intent.getStringExtra(Helper.COURSE_END)));
+            editTextMentorName.setText(intent.getStringExtra(Helper.MENTOR_NAME));
+            editTextMentorPhone.setText(intent.getStringExtra(Helper.MENTOR_PHONE));
+            editTextMentorEmail.setText(intent.getStringExtra(Helper.MENTOR_EMAIL));
 
             //gets and sets spinner value
-            int selectionPosition = adapter.getPosition(intent.getStringExtra(COURSE_STATUS));
+            int selectionPosition = adapter.getPosition(intent.getStringExtra(Helper.COURSE_STATUS));
             spinnerCourseStatus.setSelection(selectionPosition);
 
         }
+
+        saveCourseBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    saveCourse();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         //sets the onClickListener for the date textViews and check boxes
         textViewCourseStart.setOnClickListener(this);
@@ -125,28 +128,6 @@ public class AddNewCourseActivity extends AppCompatActivity implements DatePicke
         //creates or provides a view model instance
         courseViewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(CourseViewModel.class);
 
-    }
-
-    //sets the menu for the activity
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.add_course_menu, menu);
-        return true;
-    }
-
-    //sets the methods for the menu buttons
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.save_course) {
-            try {
-                saveCourse();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     //method for the save button
@@ -158,65 +139,48 @@ public class AddNewCourseActivity extends AppCompatActivity implements DatePicke
         String mentorName = editTextMentorName.getText().toString();
         String mentorPhone = editTextMentorPhone.getText().toString();
         String mentorEmail = editTextMentorEmail.getText().toString();
+        CourseEntity course = null;
 
         //check to see if all fields have a value and are not blank spaces
         if (name.trim().isEmpty() || startDate.trim().isEmpty() || endDate.trim().isEmpty() ||
                 mentorName.trim().isEmpty() || mentorPhone.trim().isEmpty() || mentorEmail.trim().isEmpty()) {
             Toast.makeText(this, "Please enter a value in all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        //checks to see if there is a course id or not, if so updates a course if not adds a course
+        if (courseId == -1) {
+            try {
+                course = new CourseEntity(name, Helper.stringToDate(startDate), Helper.stringToDate(endDate), courseStatus, mentorName, mentorPhone, mentorEmail, termId);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            courseViewModel.insert(course);
+            Toast.makeText(this, "Course Added", Toast.LENGTH_SHORT).show();
         } else {
-
-            //checks to see if there is a course id or not, if so updates a course if not adds a course
-            CourseEntity course = null;
-            if (courseId == -1) {
-                try {
-                    course = new CourseEntity(name, Helper.stringToDate(startDate), Helper.stringToDate(endDate), courseStatus, mentorName, mentorPhone, mentorEmail, termId);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                courseViewModel.insert(course);
-                Toast.makeText(this, "Course Added", Toast.LENGTH_SHORT).show();
-            } else {
-                try {
-                    course = new CourseEntity(name, Helper.stringToDate(startDate), Helper.stringToDate(endDate), courseStatus, mentorName, mentorPhone, mentorEmail, termId);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                course.setCourse_id(courseId);
-                courseViewModel.update(course);
-                Toast.makeText(this, "Course updated", Toast.LENGTH_SHORT).show();
-
+            try {
+                course = new CourseEntity(name, Helper.stringToDate(startDate), Helper.stringToDate(endDate), courseStatus, mentorName, mentorPhone, mentorEmail, termId);
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
-
-            //checks to see if a notification needs to be sent or not
-            if (checkBoxStart.isChecked()) {
-                Intent intent = new Intent(AddNewCourseActivity.this, MyReceiver.class);
-                intent.putExtra("Notification", "This is a reminder that you start course, " + name + ", today!");
-                PendingIntent sender = PendingIntent.getBroadcast(AddNewCourseActivity.this, 0, intent, 0);
-                AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-                alarmManager.set(AlarmManager.RTC_WAKEUP, Helper.stringToDate(startDate).getTime(), sender);
-
-            }
-            if (checkBoxEnd.isChecked()) {
-                Intent intent = new Intent(AddNewCourseActivity.this, MyReceiver.class);
-                intent.putExtra("Notification", "This is a reminder that you finish course, " + name + ", today!");
-                PendingIntent sender = PendingIntent.getBroadcast(AddNewCourseActivity.this, 1, intent, 0);
-                AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-                alarmManager.set(AlarmManager.RTC_WAKEUP, Helper.stringToDate(startDate).getTime(), sender);
-            }
-
-            Intent intent = new Intent(AddNewCourseActivity.this, CourseListActivity.class);
-            intent.putExtra(AddNewTermActivity.TERM_ID, termId);
-            intent.putExtra(AddNewCourseActivity.COURSE_ID, courseId);
-            intent.putExtra(AddNewCourseActivity.COURSE_NAME, name);
-            intent.putExtra(AddNewCourseActivity.COURSE_START, startDate);
-            intent.putExtra(AddNewCourseActivity.COURSE_END, endDate);
-            intent.putExtra(AddNewCourseActivity.COURSE_STATUS, courseStatus);
-            intent.putExtra(AddNewCourseActivity.MENTOR_NAME, mentorName);
-            intent.putExtra(AddNewCourseActivity.MENTOR_PHONE, mentorPhone);
-            intent.putExtra(AddNewCourseActivity.MENTOR_EMAIL, mentorEmail);
-            startActivity(intent);
+            course.setCourse_id(courseId);
+            courseViewModel.update(course);
+            Toast.makeText(this, "Course updated", Toast.LENGTH_SHORT).show();
 
         }
+
+        //checks to see if a notification needs to be sent or not
+        if (checkBoxStart.isChecked()) {
+            Helper.sendNotification(startDate, "This is a reminder that you start course, " + name + " today!", 0, AddNewCourseActivity.this);
+
+        }
+
+        if (checkBoxEnd.isChecked()) {
+            Helper.sendNotification(startDate, "This is a reminder that you finish course, " + name + " today!", 1, AddNewCourseActivity.this);
+        }
+
+        Helper.goToCourses(userId, termId, AddNewCourseActivity.this);
+
     }
 
     //sets the text view text to the selected date

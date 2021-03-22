@@ -63,7 +63,7 @@ public class ResetPasswordActivity extends AppCompatActivity {
     private boolean isValidUserEmail(String username) {
         currentUser = db.userDao().validateUserByEmail(username);
 
-        if (Helper.isInputEmpty(textInputUsername, username)) {
+        if (Helper.isInputEmpty(textInputUsername)) {
             return false;
         }
 

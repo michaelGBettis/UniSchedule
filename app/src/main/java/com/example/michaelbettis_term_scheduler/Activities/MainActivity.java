@@ -20,22 +20,12 @@ import com.google.android.material.textfield.TextInputLayout;
 
 
 public class MainActivity extends AppCompatActivity {
-    public static final String USER_ID = "com.example.michaelbettis_term_scheduler.Activities.USER_ID";
-    public static final String USER_F_NAME = "com.example.michaelbettis_term_scheduler.Activities.USER_F_NAME";
-    public static final String USER_M_NAME = "com.example.michaelbettis_term_scheduler.Activities.USER_M_NAME";
-    public static final String USER_L_NAME = "com.example.michaelbettis_term_scheduler.Activities.USER_L_NAME";
-    public static final String USER_ADDRESS = "com.example.michaelbettis_term_scheduler.Activities.USER_ADDRESS";
-    public static final String USER_PHONE = "com.example.michaelbettis_term_scheduler.Activities.USER_PHONE";
-    public static final String USER_MINOR = "com.example.michaelbettis_term_scheduler.Activities.USER_MINOR";
-    public static final String USER_GPA_SCORE = "com.example.michaelbettis_term_scheduler.Activities.USER_GPA_SCORE";
-    public static final String USER_EMAIL = "com.example.michaelbettis_term_scheduler.Activities.USER_EMAIL";
-    public static final String STUDENT_TYPE = "com.example.michaelbettis_term_scheduler.Activities.STUDENT_TYPE";
-    public static final String COLLEGE_TYPE = "com.example.michaelbettis_term_scheduler.Activities.COLLEGE_TYPE";
     private TextInputLayout usernameTextInput;
     private TextInputLayout passwordTextInput;
     private Button loginBtn;
     private Button signUpBtn;
     private Button resetPasswordBtn;
+    private Button testBtn;
     SchedulerDatabase db;
     UserEntity currentUser;
 
@@ -52,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         passwordTextInput = findViewById(R.id.password);
         signUpBtn = findViewById(R.id.sign_up);
         resetPasswordBtn = findViewById(R.id.reset_password);
+        testBtn = findViewById(R.id.test_app_button);
         loginBtn = findViewById(R.id.login);
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
@@ -62,11 +53,10 @@ public class MainActivity extends AppCompatActivity {
 
                 if (validateLogin(username, password)) {
 
-                    Intent intent = new Intent(MainActivity.this, TermListActivity.class);
-                    intent.putExtra(MainActivity.USER_ID, currentUser.getUser_id());
-                    startActivity(intent);
+                    Helper.goToTerms(currentUser.getUser_id(), MainActivity.this);
                     usernameTextInput.getEditText().setText("");
                     passwordTextInput.getEditText().setText("");
+
                 }
             }
         });
@@ -89,6 +79,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        testBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Helper.goToTerms(1, MainActivity.this);
+            }
+        });
+
     }
 
     private boolean validateLogin(String username, String password) {
@@ -96,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         currentUser = db.userDao().validateLogin(username, password);
 
 
-        if (Helper.isInputEmpty(usernameTextInput, password) | Helper.isInputEmpty(passwordTextInput, username)) {
+        if (Helper.isInputEmpty(usernameTextInput) | Helper.isInputEmpty(passwordTextInput)) {
             return false;
         }
 

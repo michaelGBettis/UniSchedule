@@ -21,6 +21,7 @@ import com.example.michaelbettis_term_scheduler.Activities.CourseActivities.AddN
 
 import com.example.michaelbettis_term_scheduler.Activities.MainActivity;
 import com.example.michaelbettis_term_scheduler.R;
+import com.example.michaelbettis_term_scheduler.utils.Helper;
 import com.example.michaelbettis_term_scheduler.utils.SchedulerDatabase;
 
 import com.example.michaelbettis_term_scheduler.Entities.NoteEntity;
@@ -30,10 +31,10 @@ import java.util.Objects;
 
 public class NoteDetailActivity extends AppCompatActivity {
 
+    private int userId;
+    private int termId;
     private int courseId;
     private int noteId;
-    private String name;
-    private String description;
     private NoteViewModel noteViewModel;
     SchedulerDatabase db;
     NoteEntity currentNote;
@@ -56,26 +57,16 @@ public class NoteDetailActivity extends AppCompatActivity {
 
         //assigning intent values
         Intent intent = getIntent();
-        name = intent.getStringExtra(AddNewNoteActivity.NOTE_NAME);
-        description = intent.getStringExtra(AddNewNoteActivity.NOTE_DESCRIPTION);
-        noteId = intent.getIntExtra(AddNewNoteActivity.NOTE_ID, -1);
-        courseId = intent.getIntExtra(AddNewCourseActivity.COURSE_ID, -1);
+        userId = intent.getIntExtra(Helper.USER_ID, -1);
+        termId = intent.getIntExtra(Helper.TERM_END, -1);
+        courseId = intent.getIntExtra(Helper.COURSE_ID, -1);
+        noteId = intent.getIntExtra(Helper.NOTE_ID, -1);
         db = SchedulerDatabase.getInstance(getApplicationContext());
         currentNote = db.noteDao().getCurrentNote(courseId, noteId);
 
         //setting view text
-        textViewNoteName.setText(name);
-        textViewNoteDescription.setText(description);
-
-        Button assessmentButton = findViewById(R.id.all_assessments);
-        assessmentButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(NoteDetailActivity.this, AssessmentListActivity.class);
-                intent.putExtra(AddNewCourseActivity.COURSE_ID, courseId);
-                startActivity(intent);
-            }
-        });
+        textViewNoteName.setText(currentNote.getNote_name());
+        textViewNoteDescription.setText(currentNote.getNote_info());
     }
 
     @Override
@@ -95,57 +86,28 @@ public class NoteDetailActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.delete_note:
-                deleteNote();
+                Helper.deleteNote(NoteDetailActivity.this, noteViewModel, currentNote);
+                Helper.goToNotes(termId, userId, courseId, NoteDetailActivity.this);
                 return true;
             case R.id.edit_note:
-                editNote();
+                Helper.editNote(NoteDetailActivity.this, currentNote);
                 return true;
             case R.id.share_note:
                 shareNote();
-                return true;
-            case R.id.sign_out:
-                signOut();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    private void signOut() {
-        Intent intent = new Intent(NoteDetailActivity.this, MainActivity.class);
-        startActivity(intent);
-        finish();
-        Toast.makeText(this, "Sign out successful!", Toast.LENGTH_SHORT).show();
-    }
-
     private void shareNote() {
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, name + "\n" + description);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, currentNote.getNote_name() + "\n" + currentNote.getNote_info());
         sendIntent.putExtra(Intent.EXTRA_TITLE, "(Username)'s shared note");
         sendIntent.setType("text/plain");
         Intent shareIntent = Intent.createChooser(sendIntent, null);
         startActivity(shareIntent);
     }
 
-    private void deleteNote() {
-        noteViewModel.delete(currentNote);
-        Toast.makeText(this, "Note deleted", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(NoteDetailActivity.this, NoteListActivity.class);
-        intent.putExtra(AddNewNoteActivity.NOTE_ID, noteId);
-        intent.putExtra(AddNewNoteActivity.NOTE_NAME, name);
-        intent.putExtra(AddNewNoteActivity.NOTE_DESCRIPTION, description);
-        intent.putExtra(AddNewCourseActivity.COURSE_ID, courseId);
-        startActivity(intent);
-
-    }
-
-    private void editNote() {
-        Intent intent = new Intent(NoteDetailActivity.this, AddNewNoteActivity.class);
-        intent.putExtra(AddNewNoteActivity.NOTE_ID, noteId);
-        intent.putExtra(AddNewNoteActivity.NOTE_NAME, name);
-        intent.putExtra(AddNewNoteActivity.NOTE_DESCRIPTION, description);
-        intent.putExtra(AddNewCourseActivity.COURSE_ID, courseId);
-        startActivity(intent);
-    }
 }

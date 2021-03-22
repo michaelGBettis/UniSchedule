@@ -57,6 +57,9 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseHold
         holder.textViewStartDate.setText(Helper.formatter(currentCourse.getStart_date()));
         holder.textViewEndDate.setText(Helper.formatter(currentCourse.getEnd_date()));
         holder.textViewStatus.setText(currentCourse.getCourse_status());
+        holder.textViewMentorName.setText(currentCourse.getCourse_mentor());
+        holder.textViewMentorPhone.setText(currentCourse.getMentor_phone());
+        holder.textViewMentorEmail.setText(currentCourse.getMentor_email());
 
     }
 
@@ -120,6 +123,9 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseHold
         private final TextView textViewStartDate;
         private final TextView textViewEndDate;
         private final TextView textViewStatus;
+        private final TextView textViewMentorName;
+        private final TextView textViewMentorPhone;
+        private final TextView textViewMentorEmail;
         private final RelativeLayout hiddenView;
         private final Button assessmentsBtn;
         private final Button notesBtn;
@@ -131,6 +137,9 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseHold
             textViewEndDate = itemView.findViewById(R.id.text_view_end_date);
             textViewStatus = itemView.findViewById(R.id.text_view_status_indicator);
             hiddenView = itemView.findViewById(R.id.course_hidden_view);
+            textViewMentorName = itemView.findViewById(R.id.instructor_name);
+            textViewMentorPhone = itemView.findViewById(R.id.instructor_phone);
+            textViewMentorEmail = itemView.findViewById(R.id.instructor_email);
             assessmentsBtn = itemView.findViewById(R.id.assessments_button);
             notesBtn = itemView.findViewById(R.id.notes_button);
 

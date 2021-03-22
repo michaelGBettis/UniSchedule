@@ -28,7 +28,6 @@ import java.util.regex.Pattern;
 
 
 public class SignUpActivity extends AppCompatActivity {
-    private static final Pattern PASSWORD_PATTERN = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!?.@#$%^&+=])(?=\\S+$).{8,}$");
     int userId;
 
     private TextInputLayout userFNameTextInput;
@@ -97,36 +96,38 @@ public class SignUpActivity extends AppCompatActivity {
                 if (studentTypeDropdown.getEditableText().toString().equals("Graduate")) {
                     userMinorTextInput.setVisibility(View.VISIBLE);
                     userGPAScoreTextInput.setVisibility(View.GONE);
-                } else {
-                    userGPAScoreTextInput.setVisibility(View.VISIBLE);
-                    userMinorTextInput.setVisibility(View.GONE);
+                    return;
                 }
+
+                userGPAScoreTextInput.setVisibility(View.VISIBLE);
+                userMinorTextInput.setVisibility(View.GONE);
 
             }
         });
         //Gets and sets the passed in values
         Intent intent = getIntent();
-        userId = getIntent().getIntExtra(MainActivity.USER_ID, -1);
-        if (intent.hasExtra(MainActivity.USER_ID)) {
+        userId = getIntent().getIntExtra(Helper.USER_ID, -1);
+        if (intent.hasExtra(Helper.USER_ID)) {
             titleTextView.setText("Account Information");
             createAccountBtn.setText("Update User");
-            userFNameTextInput.getEditText().setText(intent.getStringExtra(MainActivity.USER_F_NAME));
-            userMNameTextInput.getEditText().setText(intent.getStringExtra(MainActivity.USER_M_NAME));
-            userLNameTextInput.getEditText().setText(intent.getStringExtra(MainActivity.USER_L_NAME));
-            userAddressTextInput.getEditText().setText(intent.getStringExtra(MainActivity.USER_ADDRESS));
-            userPhoneTextInput.getEditText().setText(intent.getStringExtra(MainActivity.USER_PHONE));
-            userEmailTextInput.getEditText().setText(intent.getStringExtra(MainActivity.USER_EMAIL));
-            studentTypeDropdown.setText(intent.getStringExtra(MainActivity.STUDENT_TYPE), false);
-            collegeTypeDropdown.setText(intent.getStringExtra(MainActivity.COLLEGE_TYPE), false);
+            userFNameTextInput.getEditText().setText(intent.getStringExtra(Helper.USER_F_NAME));
+            userMNameTextInput.getEditText().setText(intent.getStringExtra(Helper.USER_M_NAME));
+            userLNameTextInput.getEditText().setText(intent.getStringExtra(Helper.USER_L_NAME));
+            userAddressTextInput.getEditText().setText(intent.getStringExtra(Helper.USER_ADDRESS));
+            userPhoneTextInput.getEditText().setText(intent.getStringExtra(Helper.USER_PHONE));
+            userEmailTextInput.getEditText().setText(intent.getStringExtra(Helper.USER_EMAIL));
+            studentTypeDropdown.setText(intent.getStringExtra(Helper.STUDENT_TYPE), false);
+            collegeTypeDropdown.setText(intent.getStringExtra(Helper.COLLEGE_TYPE), false);
 
             if (studentTypeDropdown.getEditableText().toString().equals("Graduate")) {
                 userMinorTextInput.setVisibility(View.VISIBLE);
-                userMinorTextInput.getEditText().setText(intent.getStringExtra(MainActivity.USER_MINOR));
-            } else {
-                double gpa = intent.getDoubleExtra(MainActivity.USER_GPA_SCORE, -1);
-                userGPAScoreTextInput.setVisibility(View.VISIBLE);
-                userGPAScoreTextInput.getEditText().setText(Double.toString(gpa));
+                userMinorTextInput.getEditText().setText(intent.getStringExtra(Helper.USER_MINOR));
+                return;
             }
+
+            double gpa = intent.getDoubleExtra(Helper.USER_GPA_SCORE, -1);
+            userGPAScoreTextInput.setVisibility(View.VISIBLE);
+            userGPAScoreTextInput.getEditText().setText(Double.toString(gpa));
 
         }
 
@@ -155,12 +156,12 @@ public class SignUpActivity extends AppCompatActivity {
         String program = studentType + " " + collegeType;
 
 
-        if (Helper.isInputEmpty(userFNameTextInput, fName) | Helper.isInputEmpty(userMNameTextInput, mName)
-                | Helper.isInputEmpty(userLNameTextInput, lName) | Helper.isInputEmpty(userAddressTextInput, address)
-                | Helper.isInputEmpty(userPhoneTextInput, phone) | !isValidEmail(userEmailTextInput, email)
-                | Helper.isInputEmpty(studentTypeTextInput, studentType) | Helper.isInputEmpty(collegeTypeTextInput, collegeType)
-                | isExtraStudentInputEmpty(studentType) | !isValidPassword(userPasswordTextInput, password)
-                | !isValidPassword(userPasswordChkTextInput, passwordChk)) {
+        if (Helper.isInputEmpty(userFNameTextInput) | Helper.isInputEmpty(userMNameTextInput)
+                | Helper.isInputEmpty(userLNameTextInput) | Helper.isInputEmpty(userAddressTextInput)
+                | Helper.isInputEmpty(userPhoneTextInput) | !isValidEmail(userEmailTextInput)
+                | Helper.isInputEmpty(studentTypeTextInput) | Helper.isInputEmpty(collegeTypeTextInput)
+                | isExtraStudentInputEmpty(studentType) | !isValidPassword(userPasswordTextInput)
+                | !isValidPassword(userPasswordChkTextInput)) {
             return;
         }
 
@@ -168,85 +169,91 @@ public class SignUpActivity extends AppCompatActivity {
             return;
         }
 
-        if (isCurrentUser(userId)) {
+        if (isCurrentUser(userId) && studentType.equals("Graduate")) {
 
-            if (studentType.equals("Graduate")) {
-
-                UserEntity graduate = new UserEntity(fName, mName, lName, address, phone, email, password, studentType, collegeType, program, userMinorTextInput.getEditText().getText().toString());
-                graduate.setUser_id(userId);
-                userViewModel.update(graduate);
-
-            } else {
-
-                UserEntity undergrad = new UserEntity(fName, mName, lName, address, phone, email, password, studentType, collegeType, program, Double.parseDouble(userGPAScoreTextInput.getEditText().getText().toString()));
-                undergrad.setUser_id(userId);
-                userViewModel.update(undergrad);
-
-            }
+            UserEntity graduate = new UserEntity(fName, mName, lName, address, phone, email, password, studentType, collegeType, program, userMinorTextInput.getEditText().getText().toString());
+            graduate.setUser_id(userId);
+            userViewModel.update(graduate);
             Toast.makeText(this, "User information updated", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(SignUpActivity.this, TermListActivity.class);
-            startActivity(intent);
+            Helper.goToTerms(userId, SignUpActivity.this);
 
-        } else {
-
-            if (studentType.equals("Graduate")) {
-
-                 UserEntity graduate = new UserEntity(fName, mName, lName, address, phone, email, password, studentType, collegeType, program, userMinorTextInput.getEditText().getText().toString());
-                userViewModel.insert(graduate);
-
-            } else {
-                UserEntity undergrad = new UserEntity(fName, mName, lName, address, phone, email, password, studentType, collegeType, program, Double.parseDouble(userGPAScoreTextInput.getEditText().getText().toString()));
-                userViewModel.insert(undergrad);
-            }
-
-            Toast.makeText(this, "New user created", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(SignUpActivity.this, MainActivity.class);
-            startActivity(intent);
         }
 
+        if (isCurrentUser(userId) && studentType.equals("Undergraduate")) {
 
+            UserEntity undergrad = new UserEntity(fName, mName, lName, address, phone, email, password, studentType, collegeType, program, Double.parseDouble(userGPAScoreTextInput.getEditText().getText().toString()));
+            undergrad.setUser_id(userId);
+            userViewModel.update(undergrad);
+            Toast.makeText(this, "User information updated", Toast.LENGTH_SHORT).show();
+            Helper.goToTerms(userId, SignUpActivity.this);
+
+        }
+
+        if (!isCurrentUser(userId) && studentType.equals("Graduate")) {
+
+            UserEntity graduate = new UserEntity(fName, mName, lName, address, phone, email, password, studentType, collegeType, program, userMinorTextInput.getEditText().getText().toString());
+            userViewModel.insert(graduate);
+            Toast.makeText(this, "New user created", Toast.LENGTH_SHORT).show();
+            Helper.signOut(SignUpActivity.this);
+
+        }
+
+        if (!isCurrentUser(userId) && studentType.equals("Undergraduate")) {
+            UserEntity undergrad = new UserEntity(fName, mName, lName, address, phone, email, password, studentType, collegeType, program, Double.parseDouble(userGPAScoreTextInput.getEditText().getText().toString()));
+            userViewModel.insert(undergrad);
+            Toast.makeText(this, "New user created", Toast.LENGTH_SHORT).show();
+            Helper.signOut(SignUpActivity.this);
+        }
     }
 
-    private boolean isValidEmail(TextInputLayout emailInput, String email) {
+    private boolean isValidEmail(TextInputLayout emailInput) {
+        String email = emailInput.getEditText().getText().toString();
         SchedulerDatabase db = SchedulerDatabase.getInstance(getApplicationContext());
         UserEntity isDuplicateEmail = db.userDao().validateUserByEmail(email);
 
-        if (Helper.isInputEmpty(emailInput, email)) {
+        if (Helper.isInputEmpty(emailInput)) {
             return false;
-        } else if (isDuplicateEmail != null) {
-            emailInput.setError("Email is invalid or already taken.");
-            return false;
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            emailInput.setError("Email is invalid or already taken.");
-            return false;
-        } else {
-            emailInput.setError(null);
-            return true;
         }
+
+        if (isDuplicateEmail != null) {
+            emailInput.setError("Email is invalid or already taken.");
+            return false;
+        }
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            emailInput.setError("Email is invalid or already taken.");
+            return false;
+        }
+
+        emailInput.setError(null);
+        return true;
 
     }
 
-    private boolean isValidPassword(TextInputLayout passwordInput, String password) {
+    private boolean isValidPassword(TextInputLayout passwordInput) {
+        String password = passwordInput.getEditText().getText().toString();
 
-        if (Helper.isInputEmpty(passwordInput, password)) {
+        if (Helper.isInputEmpty(passwordInput)) {
             return false;
-        } else if (!PASSWORD_PATTERN.matcher(password).matches()) {
+        }
+
+        if (!Helper.PASSWORD_PATTERN.matcher(password).matches()) {
             passwordInput.setError("Password too weak.");
             return false;
-        } else {
-            passwordInput.setError(null);
-            return true;
         }
+
+        passwordInput.setError(null);
+        return true;
     }
 
     private boolean isPasswordMatch(String password, String passwordChk, TextInputLayout passwordChkInput) {
         if (password.equals(passwordChk)) {
             passwordChkInput.setError(null);
             return true;
-        } else {
-            passwordChkInput.setError("Password does not match.");
-            return false;
         }
+
+        passwordChkInput.setError("Password does not match.");
+        return false;
 
     }
 
@@ -254,35 +261,37 @@ public class SignUpActivity extends AppCompatActivity {
         if (userId == -1) {
             return false;
         }
+
         return true;
 
     }
 
-    private boolean isValidGPAScore(TextInputLayout gpaScoreInput, String gpaScore) {
+    private boolean isValidGPAScore(TextInputLayout gpaScoreInput) {
+        String gpaScore = gpaScoreInput.getEditText().getText().toString();
 
-        if (Helper.isInputEmpty(gpaScoreInput, gpaScore)) {
+        if (Helper.isInputEmpty(gpaScoreInput)) {
             return false;
-        } else if (Double.parseDouble(gpaScore) > 4.0) {
+        }
+
+        if (Double.parseDouble(gpaScore) > 4.0) {
             gpaScoreInput.setError("enter a valid GPA score");
             return false;
-        } else {
-            gpaScoreInput.setError(null);
-            return true;
         }
+
+        gpaScoreInput.setError(null);
+        return true;
 
     }
 
     private boolean isExtraStudentInputEmpty(String studentType) {
 
         if (studentType.equals("Graduate")) {
-            System.out.println(userMinorTextInput.getEditText().getText().toString());
-            return Helper.isInputEmpty(userMinorTextInput, userMinorTextInput.getEditText().getText().toString());
-        } else if (studentType.equals("Undergraduate")) {
-            System.out.println(userGPAScoreTextInput.getEditText().getText().toString());
-            return Helper.isInputEmpty(userGPAScoreTextInput, userGPAScoreTextInput.getEditText().getText().toString());
-        } else {
-            return true;
+            return Helper.isInputEmpty(userMinorTextInput);
         }
-    }
+        if (studentType.equals("Undergraduate")) {
+            return isValidGPAScore(userGPAScoreTextInput);
+        }
 
+        return true;
+    }
 }

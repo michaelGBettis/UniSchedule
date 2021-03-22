@@ -66,17 +66,27 @@
             android:layout_below="@id/text_view_status_indicator"
             android:visibility="visible">
 
+            <TextView
+                android:id="@+id/instructor_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:text="Instructor Information"/>
 
             <TextView
                 android:id="@+id/instructor_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingLeft="8dp"
+                android:layout_below="@id/instructor_info"
                 android:text="Instructor Name: TBD"/>
 
             <TextView
                 android:id="@+id/instructor_phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingLeft="8dp"
                 android:text="Instructor Phone: TBD"
                 android:layout_below="@id/instructor_name"/>
 
@@ -84,6 +94,7 @@
                 android:id="@+id/instructor_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingLeft="8dp"
                 android:text="Mentor Email: TBD"
                 android:layout_below="@id/instructor_phone" />
 
