@@ -11,7 +11,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.michaelbettis_term_scheduler.utils.Converters;
 import com.example.michaelbettis_term_scheduler.R;
 
 import java.util.ArrayList;
@@ -38,21 +37,47 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseHold
 
     //passes the values of the courses to the view holder
     @Override
-    public void onBindViewHolder(@NonNull CourseAdapter.CourseHolder holder, final int position) {
+    public void onBindViewHolder(@NonNull final CourseAdapter.CourseHolder holder, final int position) {
+        final CourseEntity currentCourse = courses.get(position);
 
-        final boolean isExpanded = position==mExpandedPosition;
+        final boolean isExpanded=position==mExpandedPosition;
         holder.hiddenView.setVisibility(isExpanded?View.VISIBLE:View.GONE);
         holder.itemView.setActivated(isExpanded);
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener(){
             @Override
-            public void onClick(View v) {
-                mExpandedPosition = isExpanded ? -1:position;
+            public void onClick(View v){
+                mExpandedPosition=isExpanded?-1:position;
                 notifyDataSetChanged();
+
+                if(currentCourse.getCourse_status().equals("In Progress")){
+
+                    holder.startCourseBtn.setVisibility(View.GONE);
+                    holder.assessmentsBtn.setVisibility(View.VISIBLE);
+                    holder.notesBtn.setVisibility(View.VISIBLE);
+                    holder.completeCourseBtn.setVisibility(View.VISIBLE);
+                    holder.dropCourseBtn.setVisibility(View.VISIBLE);
+
+                }else if(currentCourse.getCourse_status().equals("Plan To Take")){
+
+                    holder.startCourseBtn.setVisibility(View.VISIBLE);
+                    holder.assessmentsBtn.setVisibility(View.GONE);
+                    holder.notesBtn.setVisibility(View.GONE);
+                    holder.completeCourseBtn.setVisibility(View.GONE);
+                    holder.dropCourseBtn.setVisibility(View.GONE);
+
+                }else{
+
+                    holder.startCourseBtn.setVisibility(View.GONE);
+                    holder.assessmentsBtn.setVisibility(View.VISIBLE);
+                    holder.notesBtn.setVisibility(View.VISIBLE);
+                    holder.completeCourseBtn.setVisibility(View.GONE);
+                    holder.dropCourseBtn.setVisibility(View.GONE);
+
+                }
 
             }
         });
 
-        CourseEntity currentCourse = courses.get(position);
         holder.textViewTitle.setText(currentCourse.getCourse_name());
         holder.textViewStartDate.setText(Helper.formatter(currentCourse.getStart_date()));
         holder.textViewEndDate.setText(Helper.formatter(currentCourse.getEnd_date()));
@@ -127,6 +152,9 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseHold
         private final TextView textViewMentorPhone;
         private final TextView textViewMentorEmail;
         private final RelativeLayout hiddenView;
+        private final Button startCourseBtn;
+        private final Button completeCourseBtn;
+        private final Button dropCourseBtn;
         private final Button assessmentsBtn;
         private final Button notesBtn;
 
@@ -140,8 +168,28 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseHold
             textViewMentorName = itemView.findViewById(R.id.instructor_name);
             textViewMentorPhone = itemView.findViewById(R.id.instructor_phone);
             textViewMentorEmail = itemView.findViewById(R.id.instructor_email);
+            startCourseBtn = itemView.findViewById(R.id.start_course_button);
             assessmentsBtn = itemView.findViewById(R.id.assessments_button);
             notesBtn = itemView.findViewById(R.id.notes_button);
+            completeCourseBtn = itemView.findViewById(R.id.complete_course_button);
+            dropCourseBtn = itemView.findViewById(R.id.drop_course_button);
+
+            startCourseBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = getAdapterPosition();
+                    if (listener != null && position != RecyclerView.NO_POSITION) {
+                        listener.onStartClick(courses.get(position));
+                    }
+
+                    startCourseBtn.setVisibility(View.GONE);
+                    assessmentsBtn.setVisibility(View.VISIBLE);
+                    notesBtn.setVisibility(View.VISIBLE);
+                    completeCourseBtn.setVisibility(View.VISIBLE);
+                    dropCourseBtn.setVisibility(View.VISIBLE);
+
+                }
+            });
 
             assessmentsBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -162,6 +210,38 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseHold
                     }
                 }
             });
+
+            completeCourseBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = getAdapterPosition();
+                    if (listener != null && position != RecyclerView.NO_POSITION) {
+                        listener.onCompleteClick(courses.get(position));
+                    }
+
+                    startCourseBtn.setVisibility(View.GONE);
+                    assessmentsBtn.setVisibility(View.VISIBLE);
+                    notesBtn.setVisibility(View.VISIBLE);
+                    completeCourseBtn.setVisibility(View.GONE);
+                    dropCourseBtn.setVisibility(View.GONE);
+                }
+            });
+
+            dropCourseBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    int position = getAdapterPosition();
+                    if (listener != null && position != RecyclerView.NO_POSITION) {
+                        listener.onDropClick(courses.get(position));
+                    }
+
+                    startCourseBtn.setVisibility(View.GONE);
+                    assessmentsBtn.setVisibility(View.VISIBLE);
+                    notesBtn.setVisibility(View.VISIBLE);
+                    completeCourseBtn.setVisibility(View.GONE);
+                    dropCourseBtn.setVisibility(View.GONE);
+                }
+            });
         }
     }
 
@@ -169,9 +249,15 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.CourseHold
     public interface onItemClickListener {
         void onCourseClick(CourseEntity course);
 
+        void onStartClick(CourseEntity course);
+
         void onAssessmentsClick(CourseEntity course);
 
         void onNotesClick(CourseEntity course);
+
+        void onCompleteClick(CourseEntity course);
+
+        void onDropClick(CourseEntity course);
 
     }
 

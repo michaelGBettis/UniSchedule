@@ -5,10 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,10 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.michaelbettis_term_scheduler.Activities.AssessmentActivities.AssessmentListActivity;
-import com.example.michaelbettis_term_scheduler.Activities.CourseActivities.AddNewCourseActivity;
-
-import com.example.michaelbettis_term_scheduler.Activities.MainActivity;
 import com.example.michaelbettis_term_scheduler.R;
 import com.example.michaelbettis_term_scheduler.utils.Helper;
 import com.example.michaelbettis_term_scheduler.utils.SchedulerDatabase;
@@ -34,7 +27,6 @@ public class NoteDetailActivity extends AppCompatActivity {
     private int userId;
     private int termId;
     private int courseId;
-    private int noteId;
     private NoteViewModel noteViewModel;
     SchedulerDatabase db;
     NoteEntity currentNote;
@@ -43,24 +35,28 @@ public class NoteDetailActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_detail);
+
+        //======================================Hooks=============================================//
+
+        TextView textViewNoteName = findViewById(R.id.note_name);
+        TextView textViewNoteDescription = findViewById(R.id.note_description);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        noteViewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(NoteViewModel.class);
+
+        //======================================Tool Bar==========================================//
+
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setTitle("Note Details");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        //creates or provides a view model instance
-        noteViewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(NoteViewModel.class);
-
-        //initializing views
-        TextView textViewNoteName = findViewById(R.id.note_name);
-        TextView textViewNoteDescription = findViewById(R.id.note_description);
+        //===============================Setting Intent Values====================================//
 
         //assigning intent values
         Intent intent = getIntent();
         userId = intent.getIntExtra(Helper.USER_ID, -1);
-        termId = intent.getIntExtra(Helper.TERM_END, -1);
+        termId = intent.getIntExtra(Helper.TERM_ID, -1);
         courseId = intent.getIntExtra(Helper.COURSE_ID, -1);
-        noteId = intent.getIntExtra(Helper.NOTE_ID, -1);
+        int noteId = intent.getIntExtra(Helper.NOTE_ID, -1);
         db = SchedulerDatabase.getInstance(getApplicationContext());
         currentNote = db.noteDao().getCurrentNote(courseId, noteId);
 

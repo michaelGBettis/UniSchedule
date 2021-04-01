@@ -10,7 +10,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.michaelbettis_term_scheduler.utils.Converters;
 import com.example.michaelbettis_term_scheduler.R;
 
 import java.util.ArrayList;

@@ -1,32 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/base_cardview"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginRight="8dp"
     android:layout_marginLeft="8dp"
-    android:layout_marginTop="8dp">
+    android:layout_marginTop="8dp"
+    android:layout_marginRight="8dp">
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingLeft="8dp"
         android:paddingTop="8dp"
         android:paddingRight="8dp"
-        android:paddingLeft="8dp"
         android:transitionName="example_transition">
 
-        <!-- Title, secondary and supporting text -->
+        <!--  Body  -->
         <TextView
             android:id="@+id/text_view_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Title"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:maxLines="1"
-            android:layout_toStartOf="@id/text_view_title"
             android:layout_alignParentStart="true"
-            android:ellipsize="end" />
+            android:layout_toStartOf="@id/text_view_title"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="Title"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
         <TextView
             android:id="@+id/text_view_start_date"
@@ -72,49 +71,82 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="4dp"
                 android:paddingBottom="4dp"
-                android:text="Instructor Information"/>
+                android:text="Instructor Information" />
 
             <TextView
                 android:id="@+id/instructor_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="8dp"
                 android:layout_below="@id/instructor_info"
-                android:text="Instructor Name: TBD"/>
+                android:paddingLeft="8dp"
+                android:text="Instructor Name: TBD" />
 
             <TextView
                 android:id="@+id/instructor_phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/instructor_name"
                 android:paddingLeft="8dp"
-                android:text="Instructor Phone: TBD"
-                android:layout_below="@id/instructor_name"/>
+                android:text="Instructor Phone: TBD" />
 
             <TextView
                 android:id="@+id/instructor_email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/instructor_phone"
                 android:paddingLeft="8dp"
-                android:text="Mentor Email: TBD"
-                android:layout_below="@id/instructor_phone" />
+                android:text="Mentor Email: TBD" />
 
+            <!--  Button  -->
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/start_course_button"
+                style="?attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/instructor_email"
+                android:text="Start Course"
+                android:visibility="visible"/>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/assessments_button"
                 style="?attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/instructor_email"
-                android:text="Assessments" />
+                android:layout_below="@id/start_course_button"
+                android:text="Assessments"
+                android:visibility="gone" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/notes_button"
+                style="?attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/assessments_button"
                 android:layout_below="@id/instructor_email"
+                android:layout_toEndOf="@+id/assessments_button"
                 android:text="Notes"
+                android:visibility="gone"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/complete_course_button"
                 style="?attr/borderlessButtonStyle"
-                />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/instructor_email"
+                android:layout_toEndOf="@+id/notes_button"
+                android:text="Complete"
+                android:visibility="gone"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/drop_course_button"
+                style="?attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/instructor_email"
+                android:layout_toEndOf="@+id/complete_course_button"
+                android:text="Drop"
+                android:visibility="gone"/>
+
         </RelativeLayout>
 
     </RelativeLayout>

@@ -5,10 +5,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,10 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
-
-import com.example.michaelbettis_term_scheduler.Activities.CourseActivities.AddNewCourseActivity;
-import com.example.michaelbettis_term_scheduler.Activities.MainActivity;
-import com.example.michaelbettis_term_scheduler.Activities.NoteActivities.NoteListActivity;
 import com.example.michaelbettis_term_scheduler.R;
 import com.example.michaelbettis_term_scheduler.utils.SchedulerDatabase;
 
@@ -45,7 +38,16 @@ public class AssessmentDetailActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_assessment_detail);
+
+        //======================================Hooks=============================================//
+
+        TextView tvAssessName = findViewById(R.id.assessment_name);
+        TextView tvAssessDesc = findViewById(R.id.assessment_description);
+        TextView tvAssessDueDate = findViewById(R.id.assessment_due_date);
         Toolbar toolbar = findViewById(R.id.toolbar);
+
+        //======================================Tool Bar==========================================//
+
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setTitle("Assessment Details");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -53,15 +55,12 @@ public class AssessmentDetailActivity extends AppCompatActivity {
         //creates or provides a view model instance
         assessViewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(AssessmentViewModel.class);
 
-        //initializing views
-        TextView tvAssessName = findViewById(R.id.assessment_name);
-        TextView tvAssessDesc = findViewById(R.id.assessment_description);
-        TextView tvAssessDueDate = findViewById(R.id.assessment_due_date);
+        //===============================Setting Intent Values====================================//
 
-        //assigning intent values
+        //getting intent values
         Intent intent = getIntent();
         userId = intent.getIntExtra(Helper.USER_ID, -1);
-        termId = intent.getIntExtra(Helper.TERM_END, -1);
+        termId = intent.getIntExtra(Helper.TERM_ID, -1);
         courseId = intent.getIntExtra(Helper.COURSE_ID, -1);
         assessId = intent.getIntExtra(Helper.ASSESS_ID, -1);
         courseStart = intent.getStringExtra(Helper.COURSE_START);

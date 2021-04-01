@@ -16,13 +16,12 @@ public class AssessmentViewModel extends AndroidViewModel {
 
     private final SchedulerRepository repository;
     private LiveData<List<AssessmentEntity>> allAssessments;
-    private final LiveData<List<AssessmentEntity>> associatedAssessments;
 
     public AssessmentViewModel(@NonNull Application application) {
         super(application);
         repository = new SchedulerRepository(application);
         allAssessments = repository.getAllAssessments();
-        associatedAssessments = repository.getAssociatedAssessments();
+
     }
 
     public void insert(AssessmentEntity assessment) {

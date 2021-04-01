@@ -2,9 +2,6 @@ package com.example.michaelbettis_term_scheduler.utils;
 
 import android.os.AsyncTask;
 
-
-import com.example.michaelbettis_term_scheduler.utils.Helper;
-
 import java.util.Properties;
 
 import javax.mail.Message;

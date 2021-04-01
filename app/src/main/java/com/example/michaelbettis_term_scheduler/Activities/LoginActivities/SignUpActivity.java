@@ -14,18 +14,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.michaelbettis_term_scheduler.Activities.MainActivity;
-import com.example.michaelbettis_term_scheduler.Activities.TermActivities.TermListActivity;
 import com.example.michaelbettis_term_scheduler.Entities.UserEntity;
 import com.example.michaelbettis_term_scheduler.R;
 import com.example.michaelbettis_term_scheduler.ViewModel.UserViewModel;
 import com.example.michaelbettis_term_scheduler.utils.Helper;
 import com.example.michaelbettis_term_scheduler.utils.SchedulerDatabase;
 import com.google.android.material.textfield.TextInputLayout;
-
-import java.sql.SQLOutput;
-import java.util.regex.Pattern;
-
 
 public class SignUpActivity extends AppCompatActivity {
     int userId;
@@ -44,8 +38,6 @@ public class SignUpActivity extends AppCompatActivity {
     private TextInputLayout collegeTypeTextInput;
     private AutoCompleteTextView studentTypeDropdown;
     private AutoCompleteTextView collegeTypeDropdown;
-    private TextView titleTextView;
-    private Button createAccountBtn;
     private UserViewModel userViewModel;
 
 
@@ -53,6 +45,8 @@ public class SignUpActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
+        //======================================Hooks=============================================//
 
         userFNameTextInput = findViewById(R.id.user_first_name);
         userMNameTextInput = findViewById(R.id.user_middle_name);
@@ -68,11 +62,11 @@ public class SignUpActivity extends AppCompatActivity {
         collegeTypeTextInput = findViewById(R.id.college_type);
         studentTypeDropdown = findViewById(R.id.student_type_text);
         collegeTypeDropdown = findViewById(R.id.college_type_text);
-        createAccountBtn = findViewById(R.id.create_account);
-        titleTextView = findViewById(R.id.create_account_title);
-
-        //creates or provides a view model instance
+        Button createAccountBtn = findViewById(R.id.create_account);
+        TextView titleTextView = findViewById(R.id.create_account_title);
         userViewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(UserViewModel.class);
+
+        //=======================================Adapters=========================================//
 
         //sets the values for the student type menu
         final ArrayAdapter<String> studentTypeAdapter = new ArrayAdapter<>(
@@ -104,6 +98,9 @@ public class SignUpActivity extends AppCompatActivity {
 
             }
         });
+
+        //===============================Setting Intent Values====================================//
+
         //Gets and sets the passed in values
         Intent intent = getIntent();
         userId = getIntent().getIntExtra(Helper.USER_ID, -1);
@@ -131,6 +128,8 @@ public class SignUpActivity extends AppCompatActivity {
 
         }
 
+        //====================================Buttons=============================================//
+
         createAccountBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -138,9 +137,7 @@ public class SignUpActivity extends AppCompatActivity {
             }
         });
 
-
     }
-
 
     public void createAccount() {
         String fName = userFNameTextInput.getEditText().getText().toString();
@@ -154,7 +151,6 @@ public class SignUpActivity extends AppCompatActivity {
         String studentType = studentTypeDropdown.getEditableText().toString();
         String collegeType = collegeTypeDropdown.getEditableText().toString();
         String program = studentType + " " + collegeType;
-
 
         if (Helper.isInputEmpty(userFNameTextInput) | Helper.isInputEmpty(userMNameTextInput)
                 | Helper.isInputEmpty(userLNameTextInput) | Helper.isInputEmpty(userAddressTextInput)

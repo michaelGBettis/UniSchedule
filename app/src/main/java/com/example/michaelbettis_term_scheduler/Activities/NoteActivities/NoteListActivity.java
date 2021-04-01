@@ -24,10 +24,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.michaelbettis_term_scheduler.Activities.AssessmentActivities.AssessmentListActivity;
-import com.example.michaelbettis_term_scheduler.Activities.CourseActivities.AddNewCourseActivity;
-import com.example.michaelbettis_term_scheduler.Activities.MainActivity;
-import com.example.michaelbettis_term_scheduler.Entities.AssessmentEntity;
+import com.example.michaelbettis_term_scheduler.Entities.CourseEntity;
 import com.example.michaelbettis_term_scheduler.R;
 import com.example.michaelbettis_term_scheduler.utils.Helper;
 import com.example.michaelbettis_term_scheduler.utils.SchedulerDatabase;
@@ -35,7 +32,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import com.example.michaelbettis_term_scheduler.Adapters.NoteAdapter;
 import com.example.michaelbettis_term_scheduler.Entities.NoteEntity;
@@ -50,12 +46,11 @@ public class NoteListActivity extends AppCompatActivity implements NavigationVie
     private int userId;
     private int termId;
     private int courseId;
-    private Toolbar toolbar;
     private NoteAdapter adapter;
     private DrawerLayout drawer;
     private NoteViewModel noteViewModel;
-    private NavigationView navigationView;
     SchedulerDatabase db;
+    CourseEntity currentCourse;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,8 +60,8 @@ public class NoteListActivity extends AppCompatActivity implements NavigationVie
         //======================================Hooks=============================================//
 
         drawer = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.nav_view);
-        toolbar = findViewById(R.id.toolbar);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
 
         //======================================Tool Bar==========================================//
@@ -85,12 +80,12 @@ public class NoteListActivity extends AppCompatActivity implements NavigationVie
 
         //===============================Setting Intent Values====================================//
 
-
         //assigning intent values
         Intent intent = getIntent();
         userId = intent.getIntExtra(Helper.USER_ID, -1);
-        termId = intent.getIntExtra(Helper.TERM_END, -1);
+        termId = intent.getIntExtra(Helper.TERM_ID, -1);
         courseId = intent.getIntExtra(Helper.COURSE_ID, -1);
+        currentCourse = db.courseDao().getCurrentCourse(termId, courseId);
 
         //==================================Recycler View=========================================//
 
@@ -158,12 +153,14 @@ public class NoteListActivity extends AppCompatActivity implements NavigationVie
 
         }).attachToRecyclerView(recyclerView);
 
+        //====================================Buttons=============================================//
+
         adapter.setOnItemClickListener(new NoteAdapter.onItemClickListener() {
             @Override
             public void onItemClick(NoteEntity note) {
                 Intent intent = new Intent(NoteListActivity.this, NoteDetailActivity.class);
                 intent.putExtra(Helper.USER_ID, userId);
-                intent.putExtra(Helper.TERM_END, termId);
+                intent.putExtra(Helper.TERM_ID, termId);
                 intent.putExtra(Helper.COURSE_ID, courseId);
                 intent.putExtra(Helper.NOTE_ID, note.getNote_id());
                 startActivity(intent);
@@ -177,7 +174,7 @@ public class NoteListActivity extends AppCompatActivity implements NavigationVie
             public void onClick(View view) {
                 Intent intent = new Intent(NoteListActivity.this, AddNewNoteActivity.class);
                 intent.putExtra(Helper.USER_ID, userId);
-                intent.putExtra(Helper.TERM_END, termId);
+                intent.putExtra(Helper.TERM_ID, termId);
                 intent.putExtra(Helper.COURSE_ID, courseId);
                 startActivity(intent);
             }
@@ -217,6 +214,9 @@ public class NoteListActivity extends AppCompatActivity implements NavigationVie
                 break;
             case R.id.nav_courses:
                 Helper.goToCourses(userId, termId, NoteListActivity.this);
+                break;
+            case R.id.nav_assessments:
+                Helper.goToAssessments(userId, termId, courseId, currentCourse.getStart_date().toString(), currentCourse.getEnd_date().toString(), NoteListActivity.this);
                 break;
             case R.id.nav_account_info:
                 Helper.editUser(db, userId, NoteListActivity.this);

@@ -7,6 +7,8 @@
     android:background="@color/colorAccent"
     tools:context="com.example.michaelbettis_term_scheduler.Activities.MainActivity">
 
+    <!--  Tool Bar  -->
+
     <View
         android:id="@+id/topView"
         android:layout_width="0dp"
@@ -51,6 +53,8 @@
         app:layout_constraintStart_toStartOf="@+id/topView"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+    <!--  Body  -->
 
     <TextView
         android:id="@+id/sign_in"
@@ -113,6 +117,8 @@
             android:singleLine="true" />
 
     </com.google.android.material.textfield.TextInputLayout>
+
+    <!--  Button  -->
 
     <Button
         android:id="@+id/login"

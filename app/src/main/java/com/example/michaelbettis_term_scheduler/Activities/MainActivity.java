@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 import com.example.michaelbettis_term_scheduler.Activities.LoginActivities.ResetPasswordActivity;
 import com.example.michaelbettis_term_scheduler.Activities.LoginActivities.SignUpActivity;
-import com.example.michaelbettis_term_scheduler.Activities.TermActivities.TermListActivity;
 import com.example.michaelbettis_term_scheduler.Entities.UserEntity;
 import com.example.michaelbettis_term_scheduler.R;
 import com.example.michaelbettis_term_scheduler.utils.Helper;
@@ -20,36 +19,37 @@ import com.google.android.material.textfield.TextInputLayout;
 
 
 public class MainActivity extends AppCompatActivity {
-    private TextInputLayout usernameTextInput;
+
     private TextInputLayout passwordTextInput;
-    private Button loginBtn;
-    private Button signUpBtn;
-    private Button resetPasswordBtn;
-    private Button testBtn;
-    SchedulerDatabase db;
+    private TextInputLayout usernameTextInput;
     UserEntity currentUser;
+    SchedulerDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //GradStudent@test.com
-        //UGradStudent@test.com
+        //======================================Hooks=============================================//
 
-        //initializes the values of the EditText fields
         usernameTextInput = findViewById(R.id.username);
         passwordTextInput = findViewById(R.id.password);
-        signUpBtn = findViewById(R.id.sign_up);
-        resetPasswordBtn = findViewById(R.id.reset_password);
-        testBtn = findViewById(R.id.test_app_button);
-        loginBtn = findViewById(R.id.login);
+        Button loginBtn = findViewById(R.id.login);
+        Button signUpBtn = findViewById(R.id.sign_up);
+        Button testBtn = findViewById(R.id.test_app_button);
+        Button resetPasswordBtn = findViewById(R.id.reset_password);
+
+        //====================================Buttons=============================================//
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String username = usernameTextInput.getEditText().getText().toString().toUpperCase();
                 String password = passwordTextInput.getEditText().getText().toString();
+
+                //Username: GradStudent@test.com Password: GradStudent
+                //Username: UGradStudent@test.com Password: UGradStudent
+
 
                 if (validateLogin(username, password)) {
 
@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
 
         signUpBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,7 +90,6 @@ public class MainActivity extends AppCompatActivity {
     private boolean validateLogin(String username, String password) {
         db = SchedulerDatabase.getInstance(getApplicationContext());
         currentUser = db.userDao().validateLogin(username, password);
-
 
         if (Helper.isInputEmpty(usernameTextInput) | Helper.isInputEmpty(passwordTextInput)) {
             return false;

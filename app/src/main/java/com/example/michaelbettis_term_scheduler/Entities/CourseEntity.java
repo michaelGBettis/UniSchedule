@@ -43,10 +43,6 @@ public class CourseEntity {
         this.course_id = course_id;
     }
 
-    public void setCourse_status(String course_status) {
-        this.course_status = course_status;
-    }
-
     public int getCourse_id() {
         return course_id;
     }

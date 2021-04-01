@@ -22,6 +22,7 @@ import java.util.UUID;
 
 @SuppressWarnings("ALL")
 public class ResetPasswordActivity extends AppCompatActivity {
+
     private TextInputLayout textInputUsername;
     private Button resetPasswordBtn;
     private UserViewModel userViewModel;
@@ -35,14 +36,14 @@ public class ResetPasswordActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset_password);
 
+        //======================================Hooks=============================================//
 
-        //initializes the values of the EditText fields
         textInputUsername = findViewById(R.id.reset_email);
         resetPasswordBtn = findViewById(R.id.reset_button);
         db = SchedulerDatabase.getInstance(getApplicationContext());
-
-        //creates or provides a view model instance
         userViewModel = new ViewModelProvider(this, ViewModelProvider.AndroidViewModelFactory.getInstance(this.getApplication())).get(UserViewModel.class);
+
+        //====================================Buttons=============================================//
 
         resetPasswordBtn.setOnClickListener(new View.OnClickListener() {
             @Override

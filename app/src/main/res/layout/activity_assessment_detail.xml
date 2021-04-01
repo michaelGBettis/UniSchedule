@@ -6,6 +6,8 @@
     android:layout_height="match_parent"
     tools:context="com.example.michaelbettis_term_scheduler.Activities.AssessmentActivities.AssessmentListActivity">
 
+    <!--  Tool Bar  -->
+
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
@@ -24,6 +26,7 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
+    <!--  Body  -->
 
     <TextView
         android:id="@+id/assessment_name"

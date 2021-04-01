@@ -9,6 +9,8 @@
     tools:context="com.example.michaelbettis_term_scheduler.Activities.TermActivities.TermListActivity"
     tools:openDrawer="end">
 
+    <!--  Navigation Bar  -->
+
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="match_parent"
@@ -16,6 +18,8 @@
         android:layout_gravity="start"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/navigation_drawer" />
+
+    <!--  Tool Bar  -->
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -39,6 +43,8 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
+        <!--  Body  -->
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_view"
             android:layout_width="match_parent"
@@ -47,6 +53,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/appBarLayout"
             tools:listitem="@layout/course_item" />
+
+        <!--  Button  -->
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab"

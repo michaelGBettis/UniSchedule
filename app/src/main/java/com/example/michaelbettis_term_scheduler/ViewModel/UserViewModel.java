@@ -4,22 +4,18 @@ import android.app.Application;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
-import androidx.lifecycle.LiveData;
 
 import com.example.michaelbettis_term_scheduler.Entities.UserEntity;
 import com.example.michaelbettis_term_scheduler.utils.SchedulerRepository;
 
-import java.util.List;
-
 public class UserViewModel extends AndroidViewModel {
 
     private final SchedulerRepository repository;
-    private final LiveData<List<UserEntity>> allUsers;
 
     public UserViewModel(@NonNull Application application) {
         super(application);
         repository = new SchedulerRepository(application);
-        allUsers = repository.getAllUsers();
+
     }
 
     public void insert(UserEntity user) {
@@ -34,7 +30,4 @@ public class UserViewModel extends AndroidViewModel {
         repository.delete(user);
     }
 
-    public LiveData<List<UserEntity>> getAllUsers() {
-        return allUsers;
-    }
 }

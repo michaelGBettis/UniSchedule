@@ -26,12 +26,7 @@ public interface NoteDao {
     @Query("SELECT * FROM NOTE_TABLE")
     LiveData<List<NoteEntity>> getAllNotes();
 
-    @Query("SELECT * FROM NOTE_TABLE WHERE course_id = :courseID ORDER BY note_id DESC")
-    LiveData<List<NoteEntity>> getAllAssociatedNotes(int courseID);
-
     @Query("SELECT * FROM NOTE_TABLE WHERE note_id = :noteId AND course_id = :courseId")
     NoteEntity getCurrentNote(int courseId, int noteId);
 
-    @Query("SELECT COUNT(*) FROM NOTE_TABLE WHERE course_id = :courseId")
-    int getNoteCount(int courseId);
 }

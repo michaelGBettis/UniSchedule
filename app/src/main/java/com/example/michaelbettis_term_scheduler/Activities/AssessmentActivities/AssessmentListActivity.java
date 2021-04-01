@@ -25,9 +25,6 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.michaelbettis_term_scheduler.Activities.CourseActivities.AddNewCourseActivity;
-import com.example.michaelbettis_term_scheduler.Activities.CourseActivities.CourseListActivity;
-import com.example.michaelbettis_term_scheduler.Activities.MainActivity;
 import com.example.michaelbettis_term_scheduler.R;
 import com.example.michaelbettis_term_scheduler.utils.Helper;
 import com.example.michaelbettis_term_scheduler.utils.SchedulerDatabase;
@@ -35,7 +32,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import com.example.michaelbettis_term_scheduler.Adapters.AssessmentAdapter;
 import com.example.michaelbettis_term_scheduler.Entities.AssessmentEntity;
@@ -168,7 +164,7 @@ public class AssessmentListActivity extends AppCompatActivity implements Navigat
             public void onItemClick(AssessmentEntity assessment) {
                 Intent intent = new Intent(AssessmentListActivity.this, AssessmentDetailActivity.class);
                 intent.putExtra(Helper.USER_ID, userId);
-                intent.putExtra(Helper.TERM_END, termId);
+                intent.putExtra(Helper.TERM_ID, termId);
                 intent.putExtra(Helper.COURSE_ID, courseId);
                 intent.putExtra(Helper.ASSESS_ID, assessment.getAssessment_id());
                 intent.putExtra(Helper.COURSE_START, courseStart);
@@ -176,6 +172,8 @@ public class AssessmentListActivity extends AppCompatActivity implements Navigat
                 startActivity(intent);
             }
         });
+
+        //====================================Buttons=============================================//
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -230,7 +228,7 @@ public class AssessmentListActivity extends AppCompatActivity implements Navigat
                 Helper.goToCourses(userId, termId, AssessmentListActivity.this);
                 break;
             case R.id.nav_notes:
-                Helper.goToNotes(termId, userId, courseId, AssessmentListActivity.this);
+                Helper.goToNotes(userId, termId, courseId, AssessmentListActivity.this);
                 break;
             case R.id.nav_account_info:
                 Helper.editUser(db, userId, AssessmentListActivity.this);

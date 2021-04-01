@@ -16,13 +16,12 @@ public class TermViewModel extends AndroidViewModel {
 
     private final SchedulerRepository repository;
     private LiveData<List<TermEntity>> allTerms;
-    private final LiveData<List<TermEntity>> associatedTerms;
 
     public TermViewModel(@NonNull Application application) {
         super(application);
         repository = new SchedulerRepository(application);
         allTerms = repository.getAllTerms();
-        associatedTerms = repository.getAssociatedTerms();
+
     }
 
     public void insert(TermEntity term) {
@@ -40,6 +39,5 @@ public class TermViewModel extends AndroidViewModel {
     public LiveData<List<TermEntity>> getAllTerms() {
         return allTerms;
     }
-
 
 }

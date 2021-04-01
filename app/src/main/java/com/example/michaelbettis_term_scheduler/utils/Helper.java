@@ -13,7 +13,6 @@ import androidx.appcompat.app.AlertDialog;
 
 import com.example.michaelbettis_term_scheduler.Activities.AssessmentActivities.AddNewAssessmentActivity;
 import com.example.michaelbettis_term_scheduler.Activities.AssessmentActivities.AssessmentListActivity;
-import com.example.michaelbettis_term_scheduler.Activities.CourseActivities.AddNewCourseActivity;
 import com.example.michaelbettis_term_scheduler.Activities.CourseActivities.CourseListActivity;
 import com.example.michaelbettis_term_scheduler.Activities.LoginActivities.SignUpActivity;
 import com.example.michaelbettis_term_scheduler.Activities.MainActivity;
@@ -73,6 +72,7 @@ public class Helper {
     public static final String NOTE_DESCRIPTION = "com.example.michaelbettis_term_scheduler.Activities.NOTE_DESCRIPTION";
 
     //=================================Date converters============================================//
+
     public static Date stringToDate(String string) throws ParseException {
         SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy", Locale.ENGLISH);
         return sdf.parse(string);
@@ -109,6 +109,7 @@ public class Helper {
     }
 
     //===================================Java mail helper=========================================//
+
     public static final String EMAIL = "27NlUuV1qTRpqvUVAs9/VA==";
     public static final String PASSWORD = "0kKnejGHJYM0s2agxwrNpg==";
 
@@ -125,6 +126,7 @@ public class Helper {
     }
 
     //===================================Java mail helper=========================================//
+
     public static void sendNotification(String startDate, String s, int i, Context context) throws ParseException {
         Intent intent = new Intent(context, MyReceiver.class);
         intent.putExtra("Notification", s );
@@ -135,6 +137,7 @@ public class Helper {
     }
 
     //===================================Form Validation==========================================//
+
     public static boolean isInputEmpty(TextInputLayout textInput) {
 
         if (textInput.getEditText().getText().toString().trim().isEmpty()) {
@@ -172,10 +175,10 @@ public class Helper {
         context.startActivity(intent);
     }
 
-    public static void goToNotes(int termId,  int userId, int courseId, Context context) {
+    public static void goToNotes(int userId, int termId, int courseId, Context context) {
         Intent intent = new Intent(context, NoteListActivity.class);
-        intent.putExtra(Helper.TERM_ID, termId);
         intent.putExtra(Helper.USER_ID, userId);
+        intent.putExtra(Helper.TERM_ID, termId);
         intent.putExtra(Helper.COURSE_ID, courseId);
         context.startActivity(intent);
     }

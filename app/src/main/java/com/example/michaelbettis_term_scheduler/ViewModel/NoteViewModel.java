@@ -16,13 +16,12 @@ public class NoteViewModel extends AndroidViewModel {
 
     private final SchedulerRepository repository;
     private LiveData<List<NoteEntity>> allNotes;
-    private final LiveData<List<NoteEntity>> associatedNotes;
 
     public NoteViewModel(@NonNull Application application) {
         super(application);
         repository = new SchedulerRepository(application);
         allNotes = repository.getAllNotes();
-        associatedNotes = repository.getAssociatedNotes();
+
     }
 
     public void insert(NoteEntity note) {

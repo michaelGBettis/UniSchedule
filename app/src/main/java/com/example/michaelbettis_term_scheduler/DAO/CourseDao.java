@@ -27,9 +27,6 @@ public interface CourseDao {
     @Query("SELECT * FROM COURSE_TABLE ORDER BY course_id DESC")
     LiveData<List<CourseEntity>> getAllCourses();
 
-    @Query("SELECT * FROM COURSE_TABLE WHERE term_id = :termID ORDER BY course_id DESC")
-    LiveData<List<CourseEntity>> getAllAssociatedCourses(int termID);
-
     @Query("SELECT COUNT(*) FROM COURSE_TABLE WHERE term_id = :termID")
     int getCourseCount(int termID);
 

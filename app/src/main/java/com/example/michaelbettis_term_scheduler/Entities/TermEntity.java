@@ -8,7 +8,6 @@ import java.util.Date;
 
 import static androidx.room.ForeignKey.CASCADE;
 
-
 @Entity(tableName = "term_table", foreignKeys = @ForeignKey(entity = UserEntity.class,
         parentColumns = "user_id",
         childColumns = "user_id",

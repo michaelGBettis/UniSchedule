@@ -24,11 +24,6 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.michaelbettis_term_scheduler.Activities.AssessmentActivities.AssessmentListActivity;
-import com.example.michaelbettis_term_scheduler.Activities.MainActivity;
-import com.example.michaelbettis_term_scheduler.Activities.NoteActivities.NoteListActivity;
-import com.example.michaelbettis_term_scheduler.Activities.TermActivities.AddNewTermActivity;
-import com.example.michaelbettis_term_scheduler.Activities.TermActivities.TermListActivity;
 import com.example.michaelbettis_term_scheduler.Adapters.CourseAdapter;
 import com.example.michaelbettis_term_scheduler.Entities.CourseEntity;
 import com.example.michaelbettis_term_scheduler.Entities.TermEntity;
@@ -49,8 +44,6 @@ public class CourseListActivity extends AppCompatActivity implements NavigationV
     private int termId;
     private int userId;
     private DrawerLayout drawer;
-    private NavigationView navigationView;
-    private Toolbar toolbar;
     private CourseAdapter adapter;
     private CourseViewModel courseViewModel;
     TermEntity selectedTerm;
@@ -64,8 +57,8 @@ public class CourseListActivity extends AppCompatActivity implements NavigationV
         //======================================Hooks=============================================//
 
         drawer = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.nav_view);
-        toolbar = findViewById(R.id.toolbar);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         db = SchedulerDatabase.getInstance(getApplicationContext());
 
 
@@ -76,7 +69,7 @@ public class CourseListActivity extends AppCompatActivity implements NavigationV
         //==============================Navigation Drawer Menu====================================//
 
         //Hides menu items
-        Menu menu = navigationView.getMenu();
+        final Menu menu = navigationView.getMenu();
         menu.findItem(R.id.nav_assessments).setVisible(false);
         menu.findItem(R.id.nav_notes).setVisible(false);
 
@@ -168,6 +161,16 @@ public class CourseListActivity extends AppCompatActivity implements NavigationV
             }
 
             @Override
+            public void onStartClick(CourseEntity course) {
+
+                CourseEntity newCourse = new CourseEntity(course.getCourse_name(), course.getStart_date(), course.getEnd_date(), "In Progress", course.getCourse_mentor(), course.getMentor_phone(), course.getMentor_email(), termId);
+                newCourse.setCourse_id(course.getCourse_id());
+                courseViewModel.update(newCourse);
+                Toast.makeText(CourseListActivity.this, "Course Started, Good Luck!", Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
             public void onAssessmentsClick(CourseEntity course) {
                 Helper.goToAssessments(userId, termId, course.getCourse_id(), course.getStart_date().toString(), course.getEnd_date().toString(), CourseListActivity.this);
             }
@@ -175,8 +178,31 @@ public class CourseListActivity extends AppCompatActivity implements NavigationV
             @Override
             public void onNotesClick(CourseEntity course) {
                 Helper.goToNotes(userId, termId, course.getCourse_id(), CourseListActivity.this);
+
+            }
+
+            @Override
+            public void onCompleteClick(CourseEntity course) {
+
+                CourseEntity newCourse = new CourseEntity(course.getCourse_name(), course.getStart_date(), course.getEnd_date(), "Completed", course.getCourse_mentor(), course.getMentor_phone(), course.getMentor_email(), termId);
+                newCourse.setCourse_id(course.getCourse_id());
+                courseViewModel.update(newCourse);
+                Toast.makeText(CourseListActivity.this, "Course Completed, Congratulations!", Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onDropClick(CourseEntity course) {
+
+                CourseEntity newCourse = new CourseEntity(course.getCourse_name(), course.getStart_date(), course.getEnd_date(), "Dropped", course.getCourse_mentor(), course.getMentor_phone(), course.getMentor_email(), termId);
+                newCourse.setCourse_id(course.getCourse_id());
+                courseViewModel.update(newCourse);
+                Toast.makeText(CourseListActivity.this, "Course Dropped.", Toast.LENGTH_SHORT).show();
+
             }
         });
+
+        //====================================Buttons=============================================//
 
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -185,6 +211,7 @@ public class CourseListActivity extends AppCompatActivity implements NavigationV
 
                 Intent intent = new Intent(CourseListActivity.this, AddNewCourseActivity.class);
                 intent.putExtra(Helper.TERM_ID, termId);
+                intent.putExtra(Helper.USER_ID, userId);
                 intent.putExtra(Helper.TERM_START, selectedTerm.getStart_date().toString());
                 intent.putExtra(Helper.TERM_END, selectedTerm.getEnd_date().toString());
                 startActivity(intent);

@@ -25,18 +25,10 @@ public class SchedulerRepository {
     public final CourseDao courseDao;
     public final NoteDao noteDao;
     public final AssessmentDao assessmentDao;
-    private LiveData<List<UserEntity>> allUsers;
     private final LiveData<List<TermEntity>> allTerms;
-    private final LiveData<List<TermEntity>> associatedTerms;
     private final LiveData<List<CourseEntity>> allCourses;
-    private final LiveData<List<CourseEntity>> associatedCourses;
     private final LiveData<List<NoteEntity>> allNotes;
-    private final LiveData<List<NoteEntity>> associatedNotes;
     private final LiveData<List<AssessmentEntity>> allAssessments;
-    private final LiveData<List<AssessmentEntity>> associatedAssessments;
-    private int termID;
-    private int courseID;
-    private int userID;
 
     public SchedulerRepository(Application application) {
         SchedulerDatabase database = SchedulerDatabase.getInstance(application);
@@ -46,31 +38,22 @@ public class SchedulerRepository {
         noteDao = database.noteDao();
         assessmentDao = database.assessmentDao();
         allTerms = termDao.getAllTerms();
-        associatedTerms = termDao.getAllAssociatedTerms(userID);
         allCourses = courseDao.getAllCourses();
-        associatedCourses = courseDao.getAllAssociatedCourses(termID);
         allNotes = noteDao.getAllNotes();
-        associatedNotes = noteDao.getAllAssociatedNotes(courseID);
         allAssessments = assessmentDao.getAllAssessments();
-        associatedAssessments = assessmentDao.getAllAssociatedAssessments(courseID);
 
     }
 
     //========================================USERS===============================================//
+
     public void insert(UserEntity user) {
         new InsertUserAsyncTask(userDao).execute(user);
     }
-
     public void update(UserEntity user) {
         new UpdateUserAsyncTask(userDao).execute(user);
     }
-
     public void delete(UserEntity user) {
         new DeleteUserAsyncTask(userDao).execute(user);
-    }
-
-    public LiveData<List<UserEntity>> getAllUsers() {
-        return allUsers;
     }
 
     private static class InsertUserAsyncTask extends AsyncTask<UserEntity, Void, Void> {
@@ -120,25 +103,15 @@ public class SchedulerRepository {
     public void insert(TermEntity term) {
         new InsertTermAsyncTask(termDao).execute(term);
     }
-
     public void update(TermEntity term) {
         new UpdateTermAsyncTask(termDao).execute(term);
     }
-
     public void delete(TermEntity term) {
         new DeleteTermAsyncTask(termDao).execute(term);
     }
 
-    public void deleteAllTerms() {
-        new DeleteAllTermAsyncTask(termDao).execute();
-    }
-
     public LiveData<List<TermEntity>> getAllTerms() {
         return allTerms;
-    }
-
-    public LiveData<List<TermEntity>> getAssociatedTerms() {
-        return associatedTerms;
     }
 
     private static class InsertTermAsyncTask extends AsyncTask<TermEntity, Void, Void> {
@@ -183,40 +156,14 @@ public class SchedulerRepository {
         }
     }
 
-    private static class DeleteAllTermAsyncTask extends AsyncTask<Void, Void, Void> {
-        private final TermDao termDao;
-
-        private DeleteAllTermAsyncTask(TermDao termDao) {
-            this.termDao = termDao;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            termDao.deleteAllTerms();
-            return null;
-        }
-    }
-
     //=======================================COURSES==============================================//
 
-    public void insert(CourseEntity course) {
-        new InsertCourseAsyncTask(courseDao).execute(course);
-    }
-
-    public void update(CourseEntity course) {
-        new UpdateCourseAsyncTask(courseDao).execute(course);
-    }
-
-    public void delete(CourseEntity course) {
-        new DeleteCourseAsyncTask(courseDao).execute(course);
-    }
+    public void insert(CourseEntity course) { new InsertCourseAsyncTask(courseDao).execute(course); }
+    public void update(CourseEntity course) { new UpdateCourseAsyncTask(courseDao).execute(course); }
+    public void delete(CourseEntity course) { new DeleteCourseAsyncTask(courseDao).execute(course); }
 
     public LiveData<List<CourseEntity>> getAllCourses() {
         return allCourses;
-    }
-
-    public LiveData<List<CourseEntity>> getAssociatedCourses() {
-        return associatedCourses;
     }
 
     private static class InsertCourseAsyncTask extends AsyncTask<CourseEntity, Void, Void> {
@@ -266,11 +213,9 @@ public class SchedulerRepository {
     public void insert(NoteEntity note) {
         new InsertNoteAsyncTask(noteDao).execute(note);
     }
-
     public void update(NoteEntity note) {
         new UpdateNoteAsyncTask(noteDao).execute(note);
     }
-
     public void delete(NoteEntity note) {
         new DeleteNoteAsyncTask(noteDao).execute(note);
     }
@@ -278,11 +223,6 @@ public class SchedulerRepository {
     public LiveData<List<NoteEntity>> getAllNotes() {
         return allNotes;
     }
-
-    public LiveData<List<NoteEntity>> getAssociatedNotes() {
-        return associatedNotes;
-    }
-
 
     private static class InsertNoteAsyncTask extends AsyncTask<NoteEntity, Void, Void> {
         private final NoteDao noteDao;
@@ -343,11 +283,6 @@ public class SchedulerRepository {
     public LiveData<List<AssessmentEntity>> getAllAssessments() {
         return allAssessments;
     }
-
-    public LiveData<List<AssessmentEntity>> getAssociatedAssessments() {
-        return associatedAssessments;
-    }
-
 
     private static class InsertAssessmentAsyncTask extends AsyncTask<AssessmentEntity, Void, Void> {
         private final AssessmentDao assessmentDao;

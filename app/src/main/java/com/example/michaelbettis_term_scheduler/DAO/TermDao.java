@@ -29,9 +29,6 @@ public interface TermDao {
     @Query("SELECT * FROM TERM_TABLE ORDER BY START_DATE DESC")
     LiveData<List<TermEntity>> getAllTerms();
 
-    @Query("SELECT * FROM TERM_TABLE WHERE user_id = :userID ORDER BY start_date DESC")
-    LiveData<List<TermEntity>> getAllAssociatedTerms(int userID);
-
     @Query("SELECT * FROM TERM_TABLE WHERE term_id = :termID AND user_id = :userID")
     TermEntity getCurrentTerm(int termID, int userID);
 

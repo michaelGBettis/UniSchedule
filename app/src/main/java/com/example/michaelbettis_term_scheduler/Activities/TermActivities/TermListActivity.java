@@ -1,16 +1,10 @@
 package com.example.michaelbettis_term_scheduler.Activities.TermActivities;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Canvas;
 import android.os.Bundle;
 
-import com.example.michaelbettis_term_scheduler.Activities.CourseActivities.CourseListActivity;
-import com.example.michaelbettis_term_scheduler.Activities.LoginActivities.SignUpActivity;
-import com.example.michaelbettis_term_scheduler.Activities.MainActivity;
 import com.example.michaelbettis_term_scheduler.utils.Converters;
-import com.example.michaelbettis_term_scheduler.Entities.UserEntity;
 import com.example.michaelbettis_term_scheduler.R;
 import com.example.michaelbettis_term_scheduler.Adapters.TermAdapter;
 
@@ -20,7 +14,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
@@ -42,7 +35,6 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.example.michaelbettis_term_scheduler.Entities.TermEntity;
@@ -57,8 +49,6 @@ public class TermListActivity extends AppCompatActivity implements NavigationVie
     int userId;
     private TermViewModel termViewModel;
     private DrawerLayout drawer;
-    private NavigationView navigationView;
-    private Toolbar toolbar;
     private TermAdapter adapter;
     SchedulerDatabase db;
 
@@ -68,12 +58,11 @@ public class TermListActivity extends AppCompatActivity implements NavigationVie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_term_list);
 
-
         //======================================Hooks=============================================//
 
         drawer = findViewById(R.id.drawer_layout);
-        navigationView = findViewById(R.id.nav_view);
-        toolbar = findViewById(R.id.toolbar);
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         db = SchedulerDatabase.getInstance(getApplicationContext());
 
         //======================================Tool Bar==========================================//
@@ -126,7 +115,6 @@ public class TermListActivity extends AppCompatActivity implements NavigationVie
             }
         });
 
-
         //Used to implement swipe actions for the term list items
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -172,6 +160,8 @@ public class TermListActivity extends AppCompatActivity implements NavigationVie
             }
 
         }).attachToRecyclerView(recyclerView);
+
+        //====================================Buttons=============================================//
 
         adapter.setOnItemClickListener(new TermAdapter.onItemClickListener() {
             @Override

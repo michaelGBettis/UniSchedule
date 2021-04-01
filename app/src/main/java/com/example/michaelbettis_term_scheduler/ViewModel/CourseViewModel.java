@@ -16,13 +16,12 @@ public class CourseViewModel extends AndroidViewModel {
 
     private final SchedulerRepository repository;
     private LiveData<List<CourseEntity>> allCourses;
-    private final LiveData<List<CourseEntity>> associatedCourses;
 
     public CourseViewModel(@NonNull Application application) {
         super(application);
         repository = new SchedulerRepository(application);
         allCourses = repository.getAllCourses();
-        associatedCourses = repository.getAssociatedCourses();
+
     }
 
     public void insert(CourseEntity course) {
